@@ -1,10 +1,10 @@
 # Site settings
-title: Nahsum Blog
-SEOTitle: 慕杉的博客 | Nahsum Blog
+title: Movesan Blog
+SEOTitle: 慕杉的博客 | Movesan Blog
 header-img: img/home-bg-o.jpg
 email: nahsumu@gmail.com
 description: "May Your Heart Be The Map"
-keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, 前端, 设计, 产品, 肖玉, Lynn, 肖玉的男朋友"
+keyword: "Movesan Blog"
 url: "https://huangxuan.me"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -12,8 +12,8 @@ baseurl: ""                             # for example, '/blog' if your blog host
 
 # SNS settings
 RSS: false
-weibo_username:     huxpro
-zhihu_username:     huxpro
+#weibo_username:     huxpro
+#zhihu_username:     huxpro
 github_username:    nahsum
 #twitter_username:  huxpro
 #facebook_username:  huxpro
@@ -70,7 +70,7 @@ ga_domain: huangxuan.me
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "写写代码，做做设计，<br>离开世界之前，一切都是过程"
+sidebar-about-description: "时间就像海绵里的水<br>挤一挤，总会没的"
 sidebar-avatar: /img/avatar-ms.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -90,37 +90,25 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "Su",
-        href: "http://su.gallery/"
+        title: "知乎",
+        href: "https://www.zhihu.com/"
     },{
-        title: "乱序",
-        href: "http://mida.re/"
+        title: "掘金",
+        href: "https://gold.xitu.io/"
     },{
-        title: "前端外刊评论",
-        href: "http://qianduan.guru/"
+        title: "500px",
+        href: "https://500px.com/"
     },{
-        title: "天镶的博客",
-        href: "http://lingyu.wang/"
+        title: "Stack Overflow",
+        href: "http://stackoverflow.com/"
     },{
-        title: "Luke 的自留地",
-        href: "http://hmqk1995.github.io"
+        title: "GitHub",
+        href: "https://github.com/"
     },{
-        title: "Ebn's Blog",
-        href: "http://ebnbin.com/"
+        title: "SegmentFault",
+        href: "https://segmentfault.com/"
     },{
-        title: "SmdCn's Blog",
-        href: "http://blog.smdcn.net"
-    },{
-        title: "解旻的博客",
-        href: "http://xieminis.me/"
-    },{
-        title: "DHong Say",
-        href: "http://dhong.co"
-    },{
-        title: "尹峰以为",
-        href: "http://ingf.github.io/"
-    },{
-        title: "前端神盾局",
-        href: "http://wepiaofei.github.io/blog/"
+        title: "实验楼",
+        href: "https://www.shiyanlou.com/"
     }
 ]
