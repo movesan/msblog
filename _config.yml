@@ -5,18 +5,20 @@ header-img: img/home-bg-o.jpg
 email: nahsumu@gmail.com
 description: "May Your Heart Be The Map"
 keyword: "Movesan Blog"
-url: "https://movesan.github.io"              # your host, for absolute URL
+url: "https://movesan.github.io/msblog/"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
+
+# timezone: CN
 
 
 # SNS settings
 RSS: false
-#weibo_username:     huxpro
-#zhihu_username:     huxpro
+# weibo_username:     huxpro
+zhihu_username:     movesan
 github_username:    movesan
-#twitter_username:  huxpro
-#facebook_username:  huxpro
+twitter_username:  movesanY
+# facebook_username:  huxpro
 # linkedin_username:  firstname-lastname-idxxxx
 
 
