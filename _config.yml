@@ -5,8 +5,8 @@ header-img: img/home-bg-o.jpg
 email: nahsumu@gmail.com
 description: "May Your Heart Be The Map"
 keyword: "Movesan Blog"
-url: "https://movesan.github.io/msblog/"              # your host, for absolute URL
-baseurl: "/msblog"                             # for example, '/blog' if your blog hosted on 'host/blog'
+url: "https://movesan.github.io"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
 # timezone: CN
