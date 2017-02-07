@@ -5,7 +5,7 @@ header-img: img/home-bg-o.jpg
 email: nahsumu@gmail.com
 description: "May Your Heart Be The Map"
 keyword: "Movesan Blog"
-url: "https://movesan.github.io/msblog"              # your host, for absolute URL
+url: "https://movesan.me"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
@@ -73,7 +73,7 @@ ga_domain: huangxuan.me
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "时间就像海绵里的水<br>挤一挤，总会没的"
-sidebar-avatar: img/avatar-ms.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/avatar-ms.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
