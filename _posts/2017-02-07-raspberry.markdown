@@ -8,6 +8,7 @@ header-img: "img/post-bg-rpi.jpg"
 catalog: true
 tags:
     - 树莓派
+    - 生活
 ---
 
 ## 前言
