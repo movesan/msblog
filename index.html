@@ -15,11 +15,22 @@ description: "May Your Heart Be The Map"
         </h3>
         {% endif %}
         <div class="post-content-preview">
-            {{ post.content | strip_html | truncate:200 }}
+            {{ post.content | strip_html | truncate:130 }}
         </div>
     </a>
     <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}
+        <span>
+            Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}&nbsp;&nbsp;
+        </span>
+        <!-- LeanCloud 统计访问量 -->
+        <span id="{{ site.url }}{{ post.url }}" class="leancloud_visitors meta_data_item" data-flag-title="{{ post.title }}">
+             <span class="post-meta-item-icon">
+               <span class="octicon octicon-eye"></span>
+             </span>
+             <span class="old-visitors-count" style="display: none;">{{post.views|first}}</span>
+             <span class="leancloud-visitors-count"></span>
+             <span class="post-meta-item-text">次浏览</span>
+        </span>
     </p>
 </div>
 <hr>

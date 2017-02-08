@@ -88,6 +88,12 @@ chrome-tab-theme-color: "#000000"
 service-worker: true
 
 
+# LeanCloud 文章访问量统计
+lean_cloud :
+  app_id   :  IbODenRQfrApy2jAcqrg0PN7-gzGzoHsz
+  app_key  :  awa9tFNY2RNUtxiDgwJc6D0s
+
+
 
 # Friends
 friends: [
