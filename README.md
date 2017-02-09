@@ -15,7 +15,7 @@
 
 本博客搭建暂未提供教程，想要搭建博客的小伙伴请参考以下教程：
 
-# [搭建一个免费的，无限流量的Blog----github Pages和Jekyll入门 &rarr;](http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html)
-# [Github Pages + Jekyll 独立博客一小时快速搭建&上线指南 &rarr;](http://playingfingers.com/2016/03/26/build-a-blog/)
-# [用Jekyll搭建的Github Pages个人博客 &rarr;](http://www.jianshu.com/p/88c9e72978b4)
-# [基于jekyll和github pages博客搭建全过程 &rarr;](http://zackku.com/built-blog/)
+[搭建一个免费的，无限流量的Blog----github Pages和Jekyll入门 &rarr;](http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html)
+[Github Pages + Jekyll 独立博客一小时快速搭建&上线指南 &rarr;](http://playingfingers.com/2016/03/26/build-a-blog/)
+[用Jekyll搭建的Github Pages个人博客 &rarr;](http://www.jianshu.com/p/88c9e72978b4)
+[基于jekyll和github pages博客搭建全过程 &rarr;](http://zackku.com/built-blog/)
