@@ -701,27 +701,28 @@ Markdown 支持以下这些符号前面加上反斜杠来帮助插入普通的�
     .   英文句点
     !   惊叹号
 
-----------
+---
+
 ## 免费编辑器
 
-Windows 平台
+#### Windows 平台
 
 * [MarkdownPad](http://markdownpad.com/)
 * [MarkPad](http://code52.org/DownmarkerWPF/)
 
-Linux 平台
+#### Linux 平台
 
 * [ReText](http://sourceforge.net/p/retext/home/ReText/)
 
-Mac 平台
+#### Mac 平台
 
 * [Mou](http://mouapp.com/)
 
-在线编辑器
+#### 在线编辑器
 
 * [Markable.in](http://markable.in/)
 * [Dillinger.io](http://dillinger.io/)
 
-浏览器插件
+#### 浏览器插件
 
 * [MaDe](https://chrome.google.com/webstore/detail/oknndfeeopgpibecfjljjfanledpbkog) (Chrome)

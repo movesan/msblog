@@ -67,9 +67,14 @@ layout: default
                 col-md-10 col-md-offset-1
                 post-container">
 
-				{{ content }}
+				        {{ content }}
 
                 <hr style="visibility: hidden;">
+
+                <!-- 生成post二维码 start -->
+                <p style="margin:0px auto;text-align:center; ">要下班了？扫一扫，地铁上阅读:)</p>
+                <div id="qrcodeCanvas" style="margin:0px auto;text-align:center; "></div>
+                <!-- 生成post二维码 end -->
 
                 {% if site.duoshuo_share && site.duoshuo_username %}
                 <!-- 多说 Share start -->
@@ -196,6 +201,19 @@ layout: default
     </div>
 </article>
 
+<!-- 生成post二维码 start -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.qrcode.js"></script>
+<script type="text/javascript" src="/js/qrcode.js"></script>
+<script type="text/javascript">
+	//jQuery('#qrcode').qrcode("this plugin is great");
+	$('#qrcodeCanvas').qrcode({
+    width: 150,
+    height: 150,
+		text	: "{{ site.url }}{{ page.url }}"
+	});
+</script>
+<!-- 生成post二维码 end -->
 
 {% if site.duoshuo_username %}
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->

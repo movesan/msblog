@@ -26,6 +26,8 @@ tags:
 `cmd-b` 在打开的文件之间切换  
 `cmd-shift-b` 只搜索从上次git commit后修改或者新增的文件  
 
+---
+
 ## 导航  
 （等价于上下左右）  
 `ctrl-p` 前一行  
@@ -46,6 +48,8 @@ tags:
 
 `cmd-r` 在方法之间跳转
 
+---
+
 ## 目录树操作  
 `cmd-\` 或者 `cmd-k cmd-b` 显示(隐藏)目录树  
 `ctrl-0` 焦点切换到目录树(再按一次或者`Esc`退出目录树)  
@@ -62,12 +66,15 @@ tags:
 `cmd-k l` 或者 `cmd-k right` 在右半视图中打开文件  
 `ctrl-shift-C` 复制当前文件绝对路径
 
+---
 
 ## 书签
 `cmd-F2` 在本行增加书签  
 `F2` 跳到当前文件的下一条书签  
 `shift-F2` 跳到当前文件的上一条书签  
 `ctrl-F2` 列出当前工程所有书签  
+
+---
 
 ## 选取
 > 大部分和导航一致，只不过加上shift  
@@ -85,6 +92,8 @@ tags:
 `cmd-A`  全选  
 `cmd-L`  选取一行，继续按回选取下一行  
 `ctrl-shift-W`  选取当前单词  
+
+---
 
 ## 编辑和删除文本
 #### 基本操作
@@ -119,9 +128,13 @@ tags:
 #### 编码方式  
 `ctrl-shift-U` 调出切换编码选项  
 
+---
+
 ## 查找和替换  
 `cmd-F` 在buffer中查找  
 `cmd-shift-f` 在整个工程中查找  
+
+---
 
 ## 代码片段  
 `alt-shift-S` 查看当前可用代码片段  
@@ -129,8 +142,12 @@ tags:
 
 [定制说明](https://atom.io/docs/v1.0.0/using-atom-snippets)  
 
+---
+
 ## 自动补全  
 `ctrl-space` 提示补全信息  
+
+---
 
 ## 折叠  
 `alt-cmd-[` 折叠  
@@ -139,13 +156,19 @@ tags:
 `alt-cmd-shift-}` 展开全部  
 `cmd-k cmd-N` 指定折叠层级 N为层级数  
 
+---
+
 ## 文件语法高亮  
 `ctrl-shift-L` 选择文本类型  
+
+---
 
 ## 使用Atom进行写作  
 `ctrl-shift-M` Markdown预览  
 可用代码片段
 > b, legal, img, l, i, code, t, table
+
+---
 
 ## git操作
 `cmd-alt-Z` checkout HEAD 版本  
