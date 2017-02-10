@@ -4,7 +4,7 @@ title:      "树莓派3代从0到连接WIFI访问（无显示器）"
 subtitle:   " \"Hello Raspberry Pi\""
 date:       2017-02-07 22:00:00
 author:     "Movesan"
-header-img: "img/post-bg-rpi.jpg"
+header-img: "img/in-post/post-bg-rpi.jpg"
 catalog: true
 tags:
     - 树莓派
@@ -52,7 +52,7 @@ SD卡不建议购买装好树莓派系统的，因为不能保证系统为最新
 
 ## 系统安装
 
-### 下载系统镜像
+#### 下载系统镜像
 
 官网的[下载页面](https://www.raspberrypi.org/downloads/)可以找到pi的系统镜像。
 
@@ -66,7 +66,7 @@ Raspbian的完整版是一个完整的桌面镜像，Lite版预装的软件包�
 
 下载完成后解压zip文件，将会得到一个img文件。
 
-### 将镜像写入SD卡
+#### 将镜像写入SD卡
 
 Windows系统上可以用 [Win32 Disk Imager](https://sourceforge.net/projects/win32diskimager/) 进行写入。
 
@@ -76,7 +76,7 @@ Windows系统上可以用 [Win32 Disk Imager](https://sourceforge.net/projects/w
 
 左侧Image file栏选择刚才下载并解压好的树莓派系统镜像文件（后缀为.img），右侧Device栏选择SD卡，再按下「Write」按钮，过几分钟就完成了
 
-### 启动Pi
+#### 启动Pi
 
 完成SD卡烧录之后，就可以把SD卡插入Pi中，
 
@@ -109,8 +109,6 @@ pi的默认用户名、密码分别是pi、raspberry。
 
 ## 引用链接
 
-[http://www.cnblogs.com/rond/p/4970071.html](http://www.cnblogs.com/rond/p/4970071.html)
-
-[http://hophd.com/raspberry-pi-3-model-b-installation/](http://hophd.com/raspberry-pi-3-model-b-installation/)
-
-[https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/](https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/)
+[http://www.cnblogs.com/rond/p/4970071.html](http://www.cnblogs.com/rond/p/4970071.html)<br>
+[http://hophd.com/raspberry-pi-3-model-b-installation/](http://hophd.com/raspberry-pi-3-model-b-installation/)<br>
+[https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/](https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/)<br>
