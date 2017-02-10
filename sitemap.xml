@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>http://movesan.me/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/archives/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/search/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/tags/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/about/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/2017/02/09/md-syntax/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/2017/02/09/atom-key/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/2017/02/07/raspberry/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+<url>
+  <loc>http://movesan.me/2017/02/04/hello-2017/</loc>
+  <lastmod>2017-02-10T08:47:46+00:00</lastmod>
+</url>
+</urlset>
