@@ -4,7 +4,7 @@ title:      "Markdown 语法说明"
 subtitle:   "Markdown Syntax"
 date:       2017-02-09 12:00:00
 author:     "Movesan"
-header-img: "img/in-post/post-bg-md-syn.jpg"
+header-img: "img/post-bg/post-bg-md-syn.jpg"
 catalog: true
 tags:
     - 笔记

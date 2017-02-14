@@ -4,7 +4,7 @@ title:      "树莓派3代从0到连接WIFI访问（无显示器）"
 subtitle:   " \"Hello Raspberry Pi\""
 date:       2017-02-07 22:00:00
 author:     "Movesan"
-header-img: "img/in-post/post-bg-rpi.jpg"
+header-img: "img/post-bg/post-bg-rpi.jpg"
 catalog: true
 tags:
     - 树莓派
@@ -17,7 +17,7 @@ Raspberry Pi（中文名为“树莓派”，简写为RPi）是一款信用卡�
 
 Here we go!
 
-![img](/img/in-post/post-pi.png)
+![img](/img/post-in/post-pi.png)
 
 ---
 
@@ -72,7 +72,7 @@ Windows系统上可以用 [Win32 Disk Imager](https://sourceforge.net/projects/w
 
 将SD卡插入电脑，然后执行Win 32 Disk Imager，如下：
 
-![img](/img/in-post/post-pi-imager.png)
+![img](/img/post-in/post-pi-imager.png)
 
 左侧Image file栏选择刚才下载并解压好的树莓派系统镜像文件（后缀为.img），右侧Device栏选择SD卡，再按下「Write」按钮，过几分钟就完成了
 

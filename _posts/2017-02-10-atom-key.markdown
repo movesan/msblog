@@ -2,9 +2,9 @@
 layout:     post
 title:      "Atom 常用快捷键整理"
 subtitle:   "Atom Hot Key"
-date:       2017-02-09 12:00:00
+date:       2017-02-10 12:00:00
 author:     "Movesan"
-header-img: "img/in-post/post-bg-atom-key.jpg"
+header-img: "img/post-bg/post-bg-atom-key.jpg"
 catalog: true
 tags:
     - Atom
