@@ -41,7 +41,10 @@ java反射：java反射机制是在运行状态中，对于任意一个类，都
 
 ## 为什么要用反射
 
+可以实现动态创建对象和编译，体现出很大的灵活性，特别是在J2EE的开发中它的灵活性就表现的十分明显。
 
+比如，一个大型的软件，不可能一次就把把它设计的很完美，当这个程序编译后，发布了，当发现需要更新某些功能时，我们不可能要用户把以前的卸载，再重新安装新的版本，假如这样的话，
+这个软件肯定是没有多少人用的。采用静态的话，需要把整个程序重新编译一次才可以实现功能的更新，而采用反射机制的话，它就可以不用卸载，只需要在运行时才动态的创建和编译，就可以实现该功能。
 
 ---
 
@@ -117,6 +120,12 @@ defineClass方法自动构造的。
 ## 获取类的信息
 
 我们知道了获取Class对象的三种方式，那么接下来看一看Class对象可以获取java类的哪些信息吧。
+
+#### 类对象
+
+通过 Class 类的 newInstance() 调用无参构造函数以创建对象：
+
+    Code code2 = (Code) Class.forName("com.reflect.Code").newInstance();
 
 #### 类名
 
@@ -397,15 +406,119 @@ constructor.newInstance()方法的方法参数是一个可变参数列表，但�
 
 ## 反射应用实例
 
+#### 工厂模式
+
+反射机制可以运用到工厂模式中，下面是一个简单的工厂模式：
+
+    package org;  
+
+    interface Fruit{  
+        public void eat();  
+    }  
+    class Apple implements Fruit{  
+        public void eat(){  
+            System.out.println("吃苹果。");  
+        }  
+    }  
+    class Orange implements Fruit{  
+        public void eat(){  
+            System.out.println("吃橘子");  
+        }  
+    }  
+    class Factory{     //工厂类  
+        public static Fruit getInstance(String className){  
+            Fruit f=null;  
+            if(className.equals("apple")){  
+                f=new Apple();  
+            }  
+            if(className.endsWith("orange")){  
+                f=new Orange();  
+            }  
+            return f;  
+        }  
+    }  
+    public class FactoryDemo02 {  
+        public static void main(String args[]){  
+        Fruit f=Factory.getInstance("apple");  
+        f.eat();  
+        }  
+    }  
+
+但是工厂类如果这样写的话，就有一个问题，如果增加了水果，比如香蕉，那么在工厂类里面也要进行相关的修改了，这样不合理，而java的反射机制可以解决这个问题：
+
+    package org1;  
+
+    interface Fruit {  
+        public void eat();  
+    }  
+
+    class Apple implements Fruit {  
+        public void eat() {  
+            System.out.println("吃苹果。");  
+        }  
+    }  
+
+    class Orange implements Fruit {  
+        public void eat() {  
+            System.out.println("吃橘子");  
+        }  
+    }  
+
+    class Factory {  
+        public static Fruit getInstance(String className) {  
+            Fruit f = null;  
+            try {  
+                f = (Fruit) Class.forName(className).newInstance();  
+            } catch (Exception e) {  
+                e.printStackTrace();  
+            }  
+            return f;  
+        }  
+    }  
+
+    public class CopyOfFactoryDemo03 {  
+        public static void main(String args[]) {  
+            Fruit f = Factory.getInstance("org1.Apple");  
+            f.eat();  
+        }  
+    }
+
+利用java的反射机制，就能动态的实例化各种类了。
+
+#### Spring IOC
+
+但是上述的这个工厂类还是存在一个问题，就是主函数这里需要填入一个完整的类名称，不够方便，所以要增加配置文件来简化。
+加入配置文件问题就解决了，以后如果要增加新的水果类，都要在这个配置文件里面登记。这时我们可以说配置文件可以控制程序的执行，现在看起来有点像spring的ioc了。
+
+其实Spring就是一个大的beanfactory工厂类，每个在xml配置的类都将通过反射Class.forName("类的完全限定名")方法生成具体对象放入到Spring工厂中，主程序就可以通过getBean()或
+注解的方式获取需要的对象实例。
+
+通过反射机制，将以前new方式创建对象反转给Spring第三方容器来创建，大大降低了对象之间的耦合度，这也是IOC的关键所在。
+
 ---
 
 ## 反射的性能问题
+
+反射会有些性能上的问题，慢在把装载期做的事情搬到了运行期。主要体现在以下几点：
+
+#### 产生了Dynamic Resolve
+
+无论是通过字符串获取Class、Method还是Field，都需要JVM的动态链接机制动态的进行解析和匹配，势必造成性能开销。
+
+#### 安全性验证
+
+每一次的反射调用都会造成Java安全机制进行额外的安全性验证，造成性能开销。
+
+#### 影响运行时优化
+
+反射代码使得许多JVM的运行时优化无法进行。
 
 ---
 
 ## 反射总结
 
-反射就是把java类中的组成部分映射成相应的java对象、字节模板
+把反射拿到日常生活中，最直接的意思就是我们照镜子时，能清楚的看见自己的五官、四肢，以及表情动作、穿着打扮；我们都知道，java是面向对象的语言，其实更像是模仿人类的语言，
+java中的反射就像是在照镜子，可以在运行时清楚的知道自己的状态和行为，这种特性是在其他语言中不存在的。
 
 ---
 
