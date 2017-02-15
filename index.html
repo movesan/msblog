@@ -23,14 +23,7 @@ description: "May Your Heart Be The Map"
             Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}&nbsp;&nbsp;
         </span>
         <!-- LeanCloud 统计访问量 -->
-        <span id="{{ site.baseurl }}{{ post.url }}" class="leancloud_visitors meta_data_item" data-flag-title="{{ post.title }}">
-             <span class="post-meta-item-icon">
-               <span class="octicon octicon-eye"></span>
-             </span>
-             <span class="old-visitors-count" style="display: none;">{{post.views|first}}</span>
-             <span class="leancloud-visitors-count"></span>
-             <span class="post-meta-item-text">次浏览</span>
-        </span>
+        <span data-hk-page="{{ post.url | prepend: site.url }}"> - </span>次浏览
     </p>
 </div>
 <hr>
