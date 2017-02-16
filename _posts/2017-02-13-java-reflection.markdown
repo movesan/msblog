@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Java核心技术---反射（reflecttion）"
+title:      "Java核心技术---反射（REFLECTION）"
 subtitle:   " Reflection-oriented "
 date:       2017-02-13 22:00:00
 author:     "Movesan"
@@ -524,8 +524,8 @@ java中的反射就像是在照镜子，可以在运行时清楚的知道自己�
 
 ## 引用链接
 
-[http://www.jianshu.com/p/2315dda64ad2](http://www.jianshu.com/p/2315dda64ad2)<br>
-[http://www.cnblogs.com/jqyp/archive/2012/03/29/2423112.html](http://www.cnblogs.com/jqyp/archive/2012/03/29/2423112.html)<br>
-[http://blog.csdn.net/trigl/article/details/51042403](http://blog.csdn.net/trigl/article/details/51042403)<br>
-[http://www.cnblogs.com/rollenholt/archive/2011/09/02/2163758.html](http://www.cnblogs.com/rollenholt/archive/2011/09/02/2163758.html)<br>
-[http://www.cnblogs.com/hxsyl/archive/2013/03/23/2977593.html](http://www.cnblogs.com/hxsyl/archive/2013/03/23/2977593.html)<br>
+[Java Reflection(反射机制)详解 - 总是擦破皮](http://www.jianshu.com/p/2315dda64ad2)<br>
+[Java反射机制 - 一块腹肌](http://www.cnblogs.com/jqyp/archive/2012/03/29/2423112.html)<br>
+[Java反射入门 - Trigl的博客](http://blog.csdn.net/trigl/article/details/51042403)<br>
+[java反射详解 - 被遗忘的博客](http://www.cnblogs.com/rollenholt/archive/2011/09/02/2163758.html)<br>
+[Java反射机制深入详解 - 火星十一郎](http://www.cnblogs.com/hxsyl/archive/2013/03/23/2977593.html)<br>

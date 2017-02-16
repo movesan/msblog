@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Java核心技术---代理（proxy）"
+title:      "Java核心技术---代理（PROXY）"
 subtitle:   " Proxy For Java "
 date:       2017-02-14 22:00:00
 author:     "Movesan"
@@ -320,5 +320,5 @@ Proxy类的静态方法newProxyInstance对上面具体步骤的后三步做了�
 
 ## 引用链接
 
-[http://www.jianshu.com/p/6f6bb2f0ece9](http://www.jianshu.com/p/6f6bb2f0ece9)<br>
-[http://layznet.iteye.com/blog/1182924](http://layznet.iteye.com/blog/1182924)<br>
+[代理模式及Java实现动态代理 - xiazdong](http://www.jianshu.com/p/6f6bb2f0ece9)<br>
+[java静态代理和动态代理 - layznet](http://layznet.iteye.com/blog/1182924)<br>

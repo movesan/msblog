@@ -109,6 +109,6 @@ pi的默认用户名、密码分别是pi、raspberry。
 
 ## 引用链接
 
-[http://www.cnblogs.com/rond/p/4970071.html](http://www.cnblogs.com/rond/p/4970071.html)<br>
-[http://hophd.com/raspberry-pi-3-model-b-installation/](http://hophd.com/raspberry-pi-3-model-b-installation/)<br>
-[https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/](https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/)<br>
+[[linux]树莓派入手体验和系统安装 - Ron Ngai](http://www.cnblogs.com/rond/p/4970071.html)<br>
+[RASPBERRY PI 3 MODEL B系統安裝指南 - skynet](http://hophd.com/raspberry-pi-3-model-b-installation/)<br>
+[Raspberry Pi 3 无显示器 安装指南 - xusiwei's blog](https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/)<br>
