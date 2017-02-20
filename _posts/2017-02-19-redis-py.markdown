@@ -1,0 +1,74 @@
+---
+layout:     post
+title:      "使用Python操作Redis"
+subtitle:   " 使用Python对Redis进行读写操作 "
+date:       2017-02-19 22:00:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-repy.jpg"
+catalog: true
+tags:
+    - Redis
+    - Python
+
+---
+
+## 引言
+
+最近在学习Redis的使用，由于之前也对Python进行了学习，所以结合了Python来学习Redis的基本读写操作，对和我一样的小伙伴分享下，同时也方便日后查阅。
+
+---
+
+### 正文
+
+首先你应该确保Redis已经安装到了你的机器上，有关Redis的安装与使用可以查看[这里](http://www.runoob.com/redis/redis-tutorial.html)，关于Redis，以后将会整理一个Redis的使用与应用系列的文章。
+
+成功安装好Redis后，开启Redis服务。这时我们本机就已经有了一个Redis服务端，此时需要一个客户端与其连接并操作Redis数据库。
+当然也可以打开一个终端作为Redis的客户端，但是在这里我们将利用Python程序作为客户端实现对Redis服务的连接。
+
+#### 安装redis-py
+
+要连接Redis数据库，我们要使用python的redis-py模块。
+
+python提供了一个模块redis-py来使我们很方便的操作redis数据库，安装该模块也很简单，直接使用pip安装就行，命令如下：
+
+>pip install redis
+
+模块安装成功后，就可以创建redis连接了，接下来学习怎样创建redis连接：
+redis-py提供两个类Redis和StrictRedis用于实现Redis的命令，StrictRedis用于实现大部分官方的命令，并使用官方的语法和命令（比如，SET命令对应与StrictRedis.set方法）。
+Redis是StrictRedis的子类，用于向后兼容旧版本的redis-py。 简单说，官方推荐使用StrictRedis方法。
+
+打开Python解释器：
+
+    >>> import redis
+    >>> r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+    >>> r.set('name', 'lilei')
+    True
+    >>> r.get('name')
+    'lilei'
+
+其中，host为主机地址，port是端口号。127.0.0.1是本机IP，也可以用localhost代替，6379是redis服务端口。db为选定数据库，db=0代表选择了0号数据库。redis默认有16个数据库，在conf里面可以配置。
+
+#### 建立连接池
+
+连接池的概念大家在关系型数据库中应该都很熟悉，Redis连接池也是一样的道理。
+
+上面的 r = redis.StrictRedis(host='127.0.0.1', port=6379, db=0) 即为与Redis建立连接，但是，对于大量redis连接来说，如果使用直接连接redis的方式的话，将会造成大量的TCP的重复连接，
+所以，推荐用连接池来解决这个问题，使用连接池连接上redis之后，可以从该连接池里面生成连接，调用完成之后，该链接将会返还给连接池，供其他连接请求调用，这样将减少大量redis连接的执行时间，
+下面介绍两个类Redis和StrictRedis的连接池的实现方式：
+
+Redis的连接池的方法：
+
+    pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=0)
+    r = redis.Redis(connection_pool=pool)
+
+StrictRedis的连接池的实现方式:
+
+    pool = redis.ConnectionPool(host='127.0.0.1', port=6379, db=0)
+    r = redis.StrictRedis(connection_pool=pool
+
+---
+
+## 总结
+
+以上是关于Python对Redis基本的键值对操作，对于Redis其他方法和其他数据类型的API可查阅[redis-py的开源项目](https://github.com/andymccurdy/redis-py)，以后也会整理下操作其他数据类型的实例
+以及Python对于Redis的高级操作。希望大家共同学习交流。

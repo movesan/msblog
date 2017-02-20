@@ -7,7 +7,7 @@
 ## 关于博客样式
 
 本博客修改自[Hux Blog](http://huangxuan.me)，
-**[在这里预览模板 &rarr;](http://huangxuan.me/huxblog-boilerplate/)**
+**[在这里预览模板 &rarr;](http://huangxuan.me/huxblog-boilerplate/)**，模板的GitHub地址：[https://github.com/Huxpro/huxblog-boilerplate](https://github.com/Huxpro/huxblog-boilerplate)
 
 其中参考[Bruce Zhao's Blog](http://brucezhaor.github.io/)做了修改，感谢两位作者
 
