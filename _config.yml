@@ -116,7 +116,10 @@ friends: [
         title: "SegmentFault",
         href: "https://segmentfault.com/"
     },{
-        title: "实验楼",
-        href: "https://www.shiyanlou.com/"
+        title: "BZR's Blog",
+        href: "http://brucezhaor.github.io/"
+    },{
+        title: "Hux's Blog",
+        href: "https://huangxuan.me/"
     }
 ]
