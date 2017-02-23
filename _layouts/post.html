@@ -195,9 +195,9 @@ layout: default
 </article>
 
 <!-- 生成post二维码 start -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-<script type="text/javascript" src="/js/jquery.qrcode.js"></script>
-<script type="text/javascript" src="/js/qrcode.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> -->
+<script src="{{ "/js/jquery.qrcode.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/qrcode.js " | prepend: site.baseurl }}"></script>
 <script type="text/javascript">
 	//jQuery('#qrcode').qrcode("this plugin is great");
 	$('#qrcodeCanvas').qrcode({
