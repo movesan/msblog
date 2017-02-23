@@ -1,0 +1,305 @@
+---
+layout:     post
+title:      "Python从零单排系列之---Python基础"
+subtitle:   " 介绍Python的基本数据类型和条件分支语句 "
+date:       2017-02-22 22:00:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-python.png"
+catalog: true
+tags:
+    - Python
+
+---
+
+## 引言
+
+我们每接触学习一门语言最先面临的就是：xxx基础，虽然很枯燥但是相信大家也都知道很重要。Python作为一门计算机语言，和Java一样，也有着固定的语法方式。下面我们来写个基本的条件判断语句。
+
+在Java中，它是这样的：
+
+    // 区分正负数
+    int a = 100;
+    if(a>=0){
+        print "正数：" + a;
+    }else{
+        print "负数：" + a;
+    }
+
+在Python中，写出来是这样的：
+
+    # 区分正负数
+    a = 100
+    if a >= 0:
+        print '正数：',a
+    else:
+        print '负数：',a
+
+和Java不同，Python中注释采用 # ；当语句以冒号 : 结尾时，缩进的语句视为代码块，Java中则是通过 {} 表示；按照约定俗成的管理，应该始终坚持使用4个空格的缩进；
+Python中每一行都是一个语句，其中 ; 可不加，Java中则是必须要有 ; ；此外，Python中是大小写敏感的，所以要格外注意。
+
+---
+
+## 基本数据类型
+
+#### 变量
+
+Python中的变量与Java中变量的区别是，Python变量不需要声明，可以直接输入：
+
+    a = 10
+
+这时内存中就有了一个值为10的变量a，类型为integer，其中数据类型都是Python根据具体值自动决定的。
+
+    print a
+    print type(a)
+
+其中type()为Python的内置函数，用以查询变量类型，输出如下：
+
+    10
+    <type 'int'>
+
+需要注意的一点是，Python中的变量是可以重新赋值而且跨类型的，比如上述的变量 a：
+
+    a = 'hello'
+
+重新赋值后，输出打印:
+
+    print a
+    print type(a)
+
+结果如下：
+
+    'hello'
+    <type 'string'>
+
+这是因为Python中声明变量时是没有规定类型的，所以可以通过赋值而改变类型。
+
+#### 常用数据类型
+
+变量        | 数据类型
+-----------|----------------
+a=10	     |int 整数
+a=1.3	     |float 浮点数
+a=True	   |真值(True/False)
+a='Hello!' |字符串
+
+以上是最常用的数据类型，对于字符串来说，也可以用双引号。
+
+#### list列表
+
+sequence(序列)是一组有顺序的元素的集合，相当于Java中的集合概念。
+
+序列有两种：tuple（定值表； 也有翻译为元组） 和 list (列表)，tuple和list的主要区别在于，一旦建立，tuple的各个元素不可再变更，而list的各个元素可以再变更。下面我们先介绍list。
+
+**声明方式**：
+
+    >>>alist = [2, 1.3, 'love', 5.6, 9, 12, False]
+
+**list相关操作方法**：
+
+len()函数可以获得list元素的个数：
+
+    >>>len(alist)
+    7
+
+索引来访问list中每一个位置的元素，从0开始，当索引超出范围，就会报错：
+
+    >>>alist[0]
+    2
+    >>>alist[2]
+    'love'
+    >>>alist[6]
+    False
+    >>>alist[-3]
+    9
+    >>>alist[-5]
+    'love'
+    >>>alist[10]
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    IndexError: list index out of range
+
+list中追加元素到末尾：
+
+    >>>alist.append('movesan')
+    >>>alist
+    [2, 1.3, 'love', 5.6, 9, 12, False, 'movesan']
+
+插入元素到指定位置：
+
+    >>>alist.insert(1, 'tracy')
+    >>>alist
+    [2, 'tracy', 1.3, 'love', 5.6, 9, 12, False, 'movesan']
+
+删除list末尾元素：
+
+    >>>alist.pop()
+    'movesan'
+    >>>alist
+    [2, 'tracy', 1.3, 'love', 5.6, 9, 12, False]
+
+删除指定位置的元素:
+
+    >>>alist.pop(2)
+    1.3
+    >>>alist
+    [2, 'tracy', 'love', 5.6, 9, 12, False]
+
+#### tuple元组
+
+tuple也是系列的一种，但是一旦初始化其中元素不能改变。
+
+**声明方式**：
+
+    >>>atuple = (2, 1.3, 'love', 5.6, 9, 12, False)
+
+注意，()既可以表示tuple，又可以表示数学公式中的小括号，所以在定义一个元素的tuple时，应采用如下方式：
+
+    >>>btuple = ('a',)
+
+Python中的序列和Java中的集合一样，其中存放的元素都是引用，所以说tuple中元素指向的具体值是可以变的。
+
+#### dict字典
+
+Python内置了字典：dict的支持，dict全称dictionary，使用键-值（key-value）存储，具有极快的查找速度，类似Java中的map。
+
+**声明方式**：
+
+    d = {
+    'Adam': 95,
+    'Lisa': 85,
+    'Bart': 59
+    }
+
+**常用方法**：
+
+* dic.keys()           # 返回dic所有的键
+* dic.values()         # 返回dic所有的值
+* dic.items()          # 返回dic所有的元素（键值对）
+* dic.clear()          # 清空dic，dict变为{}
+
+把数据放入dict的方法，除了初始化时指定外，还可以通过key放入，相当于Java中的put()方法：
+
+    >>> d['movesan'] = 67
+    >>> d
+    {'Adam': 95, 'Lisa': 85, 'Bart': 59, 'movesan': 67}
+
+如果key不存在，dict就会报错：
+
+    >>> d['Thomas']
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    KeyError: 'Thomas'
+
+要避免key不存在的错误，有两种办法，一是通过in判断key是否存在：
+
+    >>> 'Thomas' in d
+    False
+
+二是通过dict提供的get方法，如果key不存在，可以返回None，或者自己指定的value：
+
+    >>> d.get('Thomas')
+    >>> d.get('Thomas', -1)
+    -1
+
+注意：返回None的时候Python的交互式命令行不显示结果。
+
+要删除一个key，用pop(key)方法，对应的value也会从dict中删除：
+
+    >>> d.pop('Adam')
+    95
+    >>> d
+    {'Lisa': 85, 'Bart': 59, 'movesan': 67}
+
+dict的特点：
+
+1. 查找速度极快，缺点是占用内存大，还会浪费很多资源<br>
+2. 存储的key-value序对是没有顺序的<br>
+3. 作为 key 的元素必须不可变<br>
+
+#### set集合
+
+set 持有一系列元素，这一点和 list 很像，但是set的元素没有重复，而且是无序的，这点和 dict 的 key很像。创建 set 的方式是调用 set() 并传入一个 list，list的元素将作为set的元素：
+
+    >>> s = set(['A', 'B', 'C'])
+
+可以查看 set 的内容：
+
+    >>> print s
+    set(['A', 'C', 'B'])
+
+set的特点：
+
+1. set的内部结构和dict很像，唯一区别是不存储value，因此，判断一个元素是否在set中速度很快<br>
+2. set存储的元素和dict的key类似，必须是不变对象，因此，任何可变对象是不能放入set中的<br>
+3. set存储的元素也是没有顺序的<br>
+
+---
+
+## 条件判断和循环
+
+#### 条件判断
+
+Python中条件判断和Java中一样，采用if语句，具体语法如下：
+
+    if <条件判断1>:
+        <执行1>
+    elif <条件判断2>:
+        <执行2>
+    elif <条件判断3>:
+        <执行3>
+    else:
+        <执行4>
+
+#### for循环
+
+for循环需要预先设定好循环的次数(n)，然后执行隶属于for的语句n次。
+
+基本构造是：
+
+    for 元素 in 序列:
+        statement
+
+举个例子来说明：
+
+    for a in [2, 1.3, 'love', 5.6, 9, 12, False]:
+        print a
+
+这个循环就是每次从列表[2, 1.3, 'love', 5.6, 9, 12, False] 中取出一个元素，然后将这个元素赋值给a，之后执行隶属于for的操作(print)。其实很像Java中的增强for循环，Python语言果然是比较高级的哈。
+
+#### while循环
+
+语法结构：
+
+    while 条件:
+        statement
+
+while会不停地循环执行隶属于它的语句，直到条件为假(False)。
+
+举例：
+
+    i = 0
+    while i < 10:
+        print i
+        i = i + 1
+
+#### 中断循环
+
+continue 在循环的某一次执行中，如果遇到continue, 那么跳过这一次执行，进行下一次的操作
+
+break 停止执行整个循环
+
+    for i in range(10):
+        if i == 2:
+            continue
+        print i
+
+当循环执行到 i = 2 的时候，if 条件成立，触发continue, 跳过本次执行(不执行print)，继续进行下一次执行(i = 3)。
+
+    for i in range(10):
+    if i == 2:        
+        break
+    print i
+
+当循环执行到i = 2的时候，if条件成立，触发break, 整个循环停止。
+
+>注：range()为内置函数，它的功能是新建一个表。这个表的元素都是整数，从0开始，下一个元素比前一个大1， 直到函数中所写的上限 （不包括该上限本身）。
