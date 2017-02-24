@@ -89,10 +89,30 @@
                         src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
                     </iframe>
                 </p>
+                <!-- background music start -->
+                <p style="margin:0px auto;text-align:center; "><a href="/nights.mp3">music</a></p>
+                <!-- background music end -->
             </div>
         </div>
     </div>
 </footer>
+
+<!-- background music start -->
+<script src="/js/swfobject.js"></script>
+<script src="/js/1bit.js"></script>
+
+<script>
+    oneBit = new OneBit('/js/1bit.swf');
+    oneBit.ready(function() {
+      oneBit.specify('color', '#000000');
+      oneBit.specify('background', '#FFFFFF');
+      oneBit.specify('playerSize', '10');
+      oneBit.specify('position', 'after');
+      oneBit.specify('analytics', false);
+      oneBit.apply('a');
+    });
+</script>
+<!-- background music end -->
 
 <!-- jQuery -->
 <script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
