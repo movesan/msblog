@@ -18,6 +18,7 @@ RSS: false
 zhihu_username:     movesan
 github_username:    movesan
 twitter_username:   movesanY
+google_username:    105717439479725668107/posts
 # facebook_username:
 # linkedin_username:  firstname-lastname-idxxxx
 
@@ -50,12 +51,12 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: movesan
+#disqus_username: movesan
 
 # Duoshuo settings
-#duoshuo_username: movesan
+duoshuo_username: brucezhaor
 # Share component is depend on Comment so we can NOT use share only.
-#duoshuo_share: true                     # set to false if you want to use Comment without Sharing
+duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
 
 
