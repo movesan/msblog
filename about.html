@@ -83,10 +83,11 @@ header-img: "img/about-bg.jpg"
     <!-- This id is used for indexing my loss comments forcedly -->
     <div class="ds-thread"
     {% if site.duoshuo_username == "movesan" %}
-        data-thread-id="1187623191091085319"
+        data-thread-key="{{site.duoshuo_username}}/about"
     {% else %}
     <!-- U can just use this key generated to index comments at page about -->
         data-thread-key="{{site.duoshuo_username}}/about"
+        data-thread-id=""
     {% endif %}
 
     data-title="{{page.title}}"
