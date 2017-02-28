@@ -1,0 +1,224 @@
+---
+layout:     post
+title:      "Python从零单排系列之---Python函数"
+subtitle:   " 调用、定义Python函数 "
+date:       2017-02-27 22:00:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-python.png"
+catalog: true
+tags:
+    - Python
+
+---
+
+## 引言
+
+每种语言都会接触到关于函数的概念，在Java中，将函数叫做方法。函数是组织好的，可重复使用的，用来实现单一，或相关联功能的代码段。它能提高应用的模块性，和代码的重复利用率。
+
+函数也是相当于程序骨骼的作用了，下面来了解下Python中函数的用法。
+
+---
+
+## 函数的定义
+
+定义一个函数的语法如下：
+
+    def functionname( parameter1, parameter2, parameterN, ... ):
+       function_suite
+       return [expression]
+
+其中规则如下：
+
+* 函数代码块以 def 关键词开头，后接函数标识符名称和圆括号()
+* 任何传入参数和自变量必须放在圆括号中间。圆括号之间可以用于定义参数，参数可有可无
+* 函数内容以冒号起始，并且缩进
+* return [表达式] 结束函数，选择性地返回一个值给调用方。不带表达式的return相当于返回 None
+
+下面为一个简单的Python函数实例，将字符串打印输出：
+
+    def printStr( str ):
+       print str
+
+与Java方法不同的是，Python中可以返回多个值，其实就是一个tuple，只是写法上可以省略：
+
+    def square(a, b):
+        a = a * a
+        b = b * b
+        return a,b
+
+---
+
+## 函数的调用
+
+函数定义完后，就可以在其他地方调用执行：
+
+    str = "Hello Python"
+
+    printStr(str)
+
+以上实例输出结果：
+
+    Hello Python
+
+调用square()函数返回多值：
+
+    a = 3
+    b = 4
+
+    x,y = square(3, 4)
+    print x,y
+
+输出结果为：
+
+    9 16
+
+---
+
+## 参数传递
+
+Python中的函数参数类型分为以下几种类型：
+
+* 必选参数
+* 默认参数
+* 不定长参数
+* 关键字参数
+
+#### 必选参数
+
+必选参数须以正确的顺序传入函数。调用时的数量必须和声明时的一样。
+调用printStr()函数，你必须传入一个参数，不然会出现语法错误：
+
+    #调用printStr函数
+    printStr()
+
+以上实例输出结果：
+
+    Traceback (most recent call last):
+      File "test.py", line 11, in <module>
+        printStr();
+    TypeError: printStr() takes exactly 1 argument (0 given)
+
+#### 默认参数
+
+调用函数时，缺省参数的值如果没有传入，则被认为是默认值。下例会打印默认的age，如果age没有被传入：
+
+    #可写函数说明
+    def printinfo( name, age = 35 ):
+       print "Name: ", name
+       print "Age ", age
+       return
+
+    #调用printinfo函数
+    printinfo( "miki", 50 )
+    printinfo( "miki" )
+
+以上实例输出结果：
+
+    Name:  miki
+    Age  50
+    Name:  miki
+    Age  35
+
+#### 不定长参数
+
+你可能需要一个函数能处理比当初声明时更多的参数。这些参数叫做不定长参数，和上述2种参数不同，声明时不会命名。基本语法如下：
+
+    def functionname([formal_args,] *var_args_tuple ):
+       function_suite
+       return [expression]
+
+加了星号（*）的变量名会存放所有未命名的变量参数。选择不多传参数也可。如下实例：
+
+    # 可写函数说明
+    def printinfo( arg1, *vartuple ):
+       "打印任何传入的参数"
+       print "输出: "
+       print arg1
+       for var in vartuple:
+          print var
+       return
+
+    # 调用printinfo 函数
+    printinfo( 10 )
+    printinfo( 70, 60, 50 )
+
+以上实例输出结果：
+
+    输出:
+    10
+    输出:
+    70
+    60
+    50
+
+#### 关键字参数
+
+关键字参数和函数调用关系紧密，函数调用使用关键字参数来确定传入的参数值。
+
+使用关键字参数允许函数调用时参数的顺序与声明时不一致，因为 Python 解释器能够用参数名匹配参数值。
+
+下例能将关键字参数顺序不重要展示得更清楚：
+
+    #可写函数说明
+    def printinfo( name, age ):
+       print "Name: ", name
+       print "Age ", age
+       return
+
+    #调用printinfo函数
+    printinfo( age=50, name="miki" )
+
+以上实例输出结果：
+
+    Name:  miki
+    Age  50
+
+另一种形式的关键字参数：
+
+    def func(**dict):
+        print type(dict)
+        print dict
+
+    func(a=1,b=9)
+    func(m=2,n=1,c=11)
+
+dict是一个字典，收集所有的关键字，传递给函数func。为了提醒Python，参数dict是包裹关键字传递所用的字典，在dict前加 * *。
+
+#### 参数组合
+
+在Python中定义函数，可以用必选参数、默认参数、可变参数和关键字参数，这4种参数都可以一起使用，或者只用其中某些，但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数和关键字参数。
+
+比如定义一个函数，包含上述4种参数：
+
+    def func(a, b, c=0, *args, **kw):
+        print 'a =', a, 'b =', b, 'c =', c, 'args =', args, 'kw =', kw
+
+在函数调用的时候，Python解释器自动按照参数位置和参数名把对应的参数传进去。
+
+    >>> func(1, 2)
+    a = 1 b = 2 c = 0 args = () kw = {}
+    >>> func(1, 2, c=3)
+    a = 1 b = 2 c = 3 args = () kw = {}
+    >>> func(1, 2, 3, 'a', 'b')
+    a = 1 b = 2 c = 3 args = ('a', 'b') kw = {}
+    >>> func(1, 2, 3, 'a', 'b', x=99)
+    a = 1 b = 2 c = 3 args = ('a', 'b') kw = {'x': 99}
+
+最神奇的是通过一个tuple和dict，你也可以调用该函数：
+
+    >>> args = (1, 2, 3, 4)
+    >>> kw = {'x': 99}
+    >>> func(*args, **kw)
+    a = 1 b = 2 c = 3 args = (4,) kw = {'x': 99}
+
+所以，对于任意函数，都可以通过类似func(*args, **kw)的形式调用它，无论它的参数是如何定义的。
+
+---
+
+## 内置函数
+
+Python内置了很多有用的函数，我们可以直接调用。可直接从Python的官方网站查看文档：
+
+[https://docs.python.org/2/library/functions.html](https://docs.python.org/2/library/functions.html)
+
+也可以在交互式命令行通过help(functionname)查看具体函数的帮助信息。
