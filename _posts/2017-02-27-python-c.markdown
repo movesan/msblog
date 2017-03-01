@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Python从零单排系列之---Python函数"
+title:      "Python从零单排系列（三）---Python函数"
 subtitle:   " 调用、定义Python函数 "
 date:       2017-02-27 22:00:00
 author:     "Movesan"
@@ -8,6 +8,12 @@ header-img: "img/post-bg/post-bg-python.png"
 catalog: true
 tags:
     - Python
+
+---
+
+>[Python从零单排系列（一）---初识Python](http://movesan.me/2017/02/20/python-a/)<br>
+>[Python从零单排系列（二）---Python基础](http://movesan.me/2017/02/22/python-b/)<br>
+>[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/02/27/python-d/)<br>
 
 ---
 
@@ -76,7 +82,7 @@ tags:
 
 ## 参数传递
 
-Python中的函数参数类型分为以下几种类型：
+与Java相比，Python函数有个特点就是有很多参数传递形式。Python中的函数参数类型分为以下几种类型：
 
 * 必选参数
 * 默认参数
