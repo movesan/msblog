@@ -2,7 +2,7 @@
 layout:     post
 title:      "Python从零单排系列（五）---模块化以及相关库"
 subtitle:   " Python模块的引用、安装以及搜索路径 "
-date:       2017-03-01 6:25:00
+date:       2017-03-02 6:25:00
 author:     "Movesan"
 header-img: "img/post-bg/post-bg-python.png"
 catalog: true
