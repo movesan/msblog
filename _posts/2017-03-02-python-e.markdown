@@ -1,0 +1,225 @@
+---
+layout:     post
+title:      "Python从零单排系列（五）---模块化以及相关库"
+subtitle:   " Python模块的引用、安装以及搜索路径 "
+date:       2017-03-01 6:25:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-python.png"
+catalog: true
+tags:
+    - Python
+
+---
+
+>[Python从零单排系列（一）---初识Python](http://movesan.me/2017/02/20/python-a/)<br>
+>[Python从零单排系列（二）---Python基础](http://movesan.me/2017/02/22/python-b/)<br>
+>[Python从零单排系列（三）---Python函数](http://movesan.me/2017/02/27/python-c/)<br>
+>[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/03/01/python-d/)<br>
+
+---
+
+## 引言
+
+为了编写可维护的代码，使其条理清晰，往往会将函数方法分组，分别放到不同的文件中，这种组织方式也就是我们常说的模块化。很多编程语言也都采用模块的概念组织代码，在Java中，我们对模块的概念是
+实现了相似功能的代码的组合；而在Python中，一个.py文件就称之为一个模块（Module）。这其实很像Java中的controller，service，每一个.java文件中都是一些方法的组合。最大的好处就是有利于
+代码的重用和提高程序的可维护性，这也是我们程序设计所遵循的宗旨。
+
+---
+
+## 模块、库、包
+
+模块、库、包的概念和区别（来自于[知乎黄哥的回答](https://www.zhihu.com/question/30082392/answer/46698211)）：
+
+**python模块**：自我包含并且有组织的代码片段为模块。表现形式为：写的代码保存为文件。这个文件就是一个模块。sample.py 其中文件名smaple为模块名字。
+
+**python包**：包是一个有层次的文件目录结构，它定义了由n个模块或n个子包组成的python应用程序执行环境。通俗一点：包是一个包含__init__.py 文件的目录，该目录下一定得有这个__init__.py文件和其它模块或子包。
+
+**python库**：参考其它编程语言的说法，就是指python中的完成一定功能的代码集合，供用户使用的代码组合。在python中是包和模块的形式。
+
+一个Python项目结构如下所示：
+
+![img](/img/post-in/post-python-e-1.png)
+
+文件foo11.py的模块名就是package.subpackage1.subsubpackage11.foo11，package.subpackage2是一个包，也可以成为一个模块。
+
+---
+
+## 使用模块
+
+Java中的模块引用采用import关键字，在Python中也一样。
+
+下例是个简单的模块support.py：
+
+    def print_func( par ):
+       print "Hello : ", par
+       return
+
+#### 引用方式
+
+**import 语句**
+
+想使用Python源文件，只需在另一个源文件里执行import语句，语法如下：
+
+    import module1[, module2[,... moduleN]
+
+当解释器遇到import语句，如果模块在当前的搜索路径就会被导入。
+搜索路径是一个解释器会先进行搜索的所有目录的列表。如想要导入模块support.py，需要把命令放在脚本的顶端：
+
+    # 导入模块
+    import support
+
+    # 现在可以调用模块里包含的函数了
+    support.print_func("Zara")
+
+以上实例输出结果：
+
+    Hello : Zara
+
+一个模块只会被导入一次，不管你执行了多少次import。这样可以防止导入模块被一遍又一遍地执行。
+
+**From ... import 语句**
+
+Python的from语句让你从模块中导入一个指定的部分到当前命名空间中。语法如下：
+
+    from modname import name1[, name2[, ... nameN]]
+
+例如，要导入模块fib的fibonacci函数，使用如下语句：
+
+    from fib import fibonacci
+
+这个声明不会把整个fib模块导入到当前的命名空间中，它只会将fib里的fibonacci单个引入到执行这个声明的模块的全局符号表。也就是说，只有fib中的fibonacci才能在当前使用。
+
+**From ... import * 语句**
+
+把一个模块的所有内容全都导入到当前的命名空间也是可行的，只需使用如下声明：
+
+    from modname import *
+
+这提供了一个简单的方法来导入一个模块中的所有项目。然而这种声明不该被过多地使用。
+
+**From ... as ...**
+
+导入模块时，还可以使用别名，这样做有一个好处，就是可以在运行时根据当前环境选择最合适的模块。比如Python标准库一般会提供StringIO和cStringIO两个库，这两个库的接口和功能是一样的，
+但是cStringIO是C写的，速度更快，所以，你会经常看到这样的写法：
+
+    try:
+        import cStringIO as StringIO
+    except ImportError: # 导入失败会捕获到ImportError
+        import StringIO
+
+这样就可以优先导入cStringIO。如果有些平台不提供cStringIO，还可以降级使用StringIO。导入cStringIO时，用import ... as ...指定了别名StringIO，因此，后续代码引用StringIO即可正常工作。
+
+还有类似simplejson这样的库，在Python 2.6之前是独立的第三方库，从2.6开始内置，所以，会有这样的写法：
+
+    try:
+        import json # python >= 2.6
+    except ImportError:
+        import simplejson as json # python <= 2.5
+
+由于Python是动态语言，函数签名一致接口就一样，因此，无论导入哪个模块后续代码都能正常工作。
+
+#### 作用域
+
+在一个模块中，我们可能会定义很多函数和变量，但有的函数和变量我们希望给别人使用，有的函数和变量我们希望仅仅在模块内部使用。在Python中，是通过_前缀来实现的。
+
+正常的函数和变量名是公开的（public），可以被直接引用。
+
+类似__xxx__这样的变量是特殊变量，可以被直接引用，但是有特殊用途，比如上面的__author__，__name__就是特殊变量，hello模块定义的文档注释也可以用特殊变量__doc__访问，我们自己的变量一般不要用这种变量名；
+
+类似_xxx和__xxx这样的函数或变量就是非公开的（private），不应该被直接引用。之所以我们说，private函数和变量“不应该”被直接引用，而不是“不能”被直接引用，是因为Python并没有一种方法可以
+完全限制访问private函数或变量，但是，从编程习惯上不应该引用private函数或变量。
+
+如果使用 from a_module import * 导入时，这部分变量和函数不会被导入。不过值得注意的是，如果使用 import a_module 这样导入模块，仍然可以用 a_module._some_var 这样的形式访问到这样的对象。
+
+#### \__name__运行测试
+
+当我们编写Python库模块的时候，我们往往运行一些测试语句。当这个程序作为库被import的时候，我们并不需要运行这些测试语句。一种解决方法是在import之前，将模块中的测试语句注释掉。
+Python有一种更优美的解决方法，就是使用__name__。
+
+下面是一个简单的库程序TestLib.py。当直接运行TestLib.py时，\__name__为"\__main__"。如果被import的话，\__name__为"TestLib"。
+
+    def lib_func(a):
+        return a + 10
+
+    if __name__ == '__main__':
+        test = 101
+        print(lib_func(test))
+
+我们在user.py中import上面的TestLib：
+
+    import TestLib
+    print(TestLib.lib_func(120))
+
+打印输出如下：
+
+    130
+
+如果在交互模式下引用TestLib：
+
+    >>>import TestLib
+    111
+
+所以我们可以用这个机制作为模块的运行测试。
+
+---
+
+## 第三方模块安装
+
+在Python中，安装第三方模块，是通过setuptools这个工具完成的。Python有两个封装了setuptools的包管理工具：easy_install和pip。目前官方推荐使用pip。
+
+现在，让我们来安装一个第三方库——Python Imaging Library，这是Python下非常强大的处理图像的工具库。一般来说，第三方库都会在Python官方的[pypi.python.org](https://pypi.python.org/pypi)
+网站注册，要安装一个第三方库，必须先知道该库的名称，可以在官网或者pypi上搜索，比如Python Imaging Library的名称叫PIL，因此，安装Python Imaging Library的命令就是：
+
+    pip install PIL
+
+耐心等待下载并安装后，就可以使用PIL了。
+
+---
+
+## 常用内置模块
+
+Python之所以自称“batteries included”，就是因为内置了许多非常有用的模块，相当于Java中的API一样，无需额外安装和配置，即可直接使用。
+
+从[这里](http://python.usyiyi.cn/translate/python_278/library/index.html)可查阅Python库以及相关文档。
+
+---
+
+## 定位模块
+
+#### 模块搜索路径
+
+在一个模块被导入前，解释器会在后台从一系列路径中搜索该模块，其搜索过程如下：
+
+* 在当前目录下搜索该模块
+* 在环境变量PYTHONPATH中指定的路径列表中依次搜索
+* 在python的安装路径中搜索
+
+事实上，解释器通过变量sys.path中包含的路径来搜索，这个变量里面包含的路径列表就是上面提到的这些路径信息，可以打印看看sys.path都包含哪些路径：
+
+    >>>import sys
+    >>>print sys.path
+    ['',
+     '/home/vagrant/python/envs/roclaws/bin',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7/plat-x86_64-linux-gnu',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7/lib-tk',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7/lib-old',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7/lib-dynload',
+     '/usr/lib/python2.7',
+     '/usr/lib/python2.7/plat-x86_64-linux-gnu',
+     '/usr/lib/python2.7/lib-tk',
+     '/home/vagrant/python/envs/roclaws/local/lib/python2.7/site-packages',
+     '/home/vagrant/python/envs/roclaws/lib/python2.7/site-packages',
+     '/home/vagrant/python/envs/roclaws/local/lib/python2.7/site-packages/IPython/extensions',
+     '/home/vagrant/.ipython']
+
+#### 添加路径
+
+一是直接修改sys.path，添加要搜索的目录：
+
+    >>> import sys
+    >>> sys.path.append('/Users/michael/my_py_scripts')
+
+这种方法是在运行时修改，运行结束后失效。
+
+第二种方法是设置环境变量PYTHONPATH，该环境变量的内容会被自动添加到模块搜索路径中。设置方式与设置Path环境变量类似。注意只需要添加你自己的搜索路径，Python自己本身的搜索路径不受影响。

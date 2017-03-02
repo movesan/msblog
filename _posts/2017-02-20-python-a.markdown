@@ -30,6 +30,10 @@ tags:
 这简直是我的偶像啊，我的理想就是做一个最不像程序员的程序猿了哈哈，然后就在无比的羡慕嫉妒百感交错之中了解了Python，更是感受到了Python的强大魅力。什么？你也和我一样，那就赶快来一起走进Python的世界吧。
 Hello Python!!!
 
+**注**：本系列主要为[廖大神的零基础学习Python](http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000)、
+[实验楼的Python快速教程](https://www.shiyanlou.com/courses/214)和[菜鸟教程](http://www.runoob.com/python/)的学习心得与笔记的整理，还涉及到一些其他有关Python的资料，
+主要作为自己的一个阶段总结以及方便日后复习查看，其中一些资料可能未标明相关链接，如有不妥，望指正。
+
 ---
 
 ## Python可以做什么
