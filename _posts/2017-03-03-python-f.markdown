@@ -1,0 +1,388 @@
+---
+layout:     post
+title:      "Python从零单排系列（六）---异常处理"
+subtitle:   " Python异常类型以及错误处理 "
+date:       2017-03-03 6:25:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-python.png"
+catalog: true
+tags:
+    - Python
+
+---
+
+>[Python从零单排系列（一）---初识Python](http://movesan.me/2017/02/20/python-a/)<br>
+>[Python从零单排系列（二）---Python基础](http://movesan.me/2017/02/22/python-b/)<br>
+>[Python从零单排系列（三）---Python函数](http://movesan.me/2017/02/27/python-c/)<br>
+>[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/03/01/python-d/)<br>
+>[Python从零单排系列（五）---模块化以及相关库](http://movesan.me/2017/03/02/python-e/)<br>
+
+---
+
+## 引言
+
+和Java中一样，Python中也有着一套完整的异常处理机制，简单的说，它与Java异常处理有几点不同：
+
+* Java中采用try/catch语句，Python中则为try/except
+* Java中异常顶级父类为Exception，Python中为BaseException
+* Java中抛出异常用关键字except，Python中为raise
+
+---
+
+## 异常处理
+
+捕捉异常可以使用try/except语句。
+try/except语句用来检测try语句块中的错误，从而让except语句捕获异常信息并处理。
+如果你不想在异常发生时结束你的程序，只需在try里捕获它。
+
+以下为简单的try....except...else的语法：
+
+    try:
+        <语句>        #运行别的代码
+    except <名字>：
+        <语句>        #如果在try部份引发了'name'异常
+    except <名字>，<数据>:
+        <语句>        #如果引发了'name'异常，获得附加的数据
+    else:
+        <语句>        #如果没有异常发生
+
+* 如果当try后的语句执行时发生异常，python就跳回到try并执行第一个匹配该异常的except子句，异常处理完毕，控制流就通过整个try语句（除非在处理异常时又引发新的异常）。
+* 如果在try后的语句里发生了异常，却没有匹配的except子句，异常将被递交到上层的try，或者到程序的最上层（这样将结束程序，并打印缺省的出错信息）。
+* 如果在try子句执行时没有发生异常，python将执行else语句后的语句（如果有else的话），然后控制流通过整个try语句。
+
+下面是简单的例子，它打开一个文件，在该文件中的内容写入内容，且并未发生异常：
+
+    try:
+        fh = open("testfile", "w")
+        fh.write("这是一个测试文件，用于测试异常!!")
+    except IOError:
+        print "Error: 没有找到文件或读取文件失败"
+    else:
+        print "内容写入文件成功"
+        fh.close()
+
+以上程序输出结果：
+
+    $ python test.py
+    内容写入文件成功
+    $ cat testfile       # 查看写入的内容
+    这是一个测试文件，用于测试异常!!
+
+下面是简单的例子，它打开一个文件，在该文件中的内容写入内容，但文件没有写入权限，发生了异常：
+
+    try:
+        fh = open("testfile", "w")
+        fh.write("这是一个测试文件，用于测试异常!!")
+    except IOError:
+        print "Error: 没有找到文件或读取文件失败"
+    else:
+        print "内容写入文件成功"
+        fh.close()
+
+在执行代码前为了测试方便，我们可以先去掉 testfile 文件的写权限，命令如下：
+
+    chmod -w testfile
+
+再执行以上代码：
+
+    $ python test.py
+    Error: 没有找到文件或读取文件失败
+
+#### 使用except而不带任何异常类型
+
+你可以不带任何异常类型使用except，如下实例：
+
+    try:
+        正常的操作
+       ......................
+    except:
+        发生异常，执行这块代码
+       ......................
+    else:
+        如果没有异常执行这块代码
+
+以上方式try-except语句捕获所有发生的异常。但这不是一个很好的方式，我们不能通过该程序识别出具体的异常信息。因为它捕获所有的异常。
+
+#### 使用except而带多种异常类型
+
+你也可以使用相同的except语句来处理多个异常信息，如下所示：
+
+    try:
+        正常的操作
+       ......................
+    except(Exception1[, Exception2[,...ExceptionN]]]):
+       发生以上多个异常中的一个，执行这块代码
+       ......................
+    else:
+        如果没有异常执行这块代码
+
+#### try-finally 语句
+
+try-finally 语句无论是否发生异常都将执行最后的代码。
+
+    try:
+        <语句>
+    finally:
+        <语句>    #退出try时总会执行
+
+实例：
+
+    try:
+        fh = open("testfile", "w")
+        fh.write("这是一个测试文件，用于测试异常!!")
+    finally:
+        print "Error: 没有找到文件或读取文件失败"
+
+如果打开的文件没有可写权限，输出如下所示：
+
+    $ python test.py
+    Error: 没有找到文件或读取文件失败
+
+同样的例子也可以写成如下方式：
+
+    try:
+        fh = open("testfile", "w")
+        try:
+            fh.write("这是一个测试文件，用于测试异常!!")
+        finally:
+            print "关闭文件"
+            fh.close()
+    except IOError:
+        print "Error: 没有找到文件或读取文件失败"
+
+当在try块中抛出一个异常，立即执行finally块代码。
+finally块中的所有语句执行后，异常被再次触发，并执行except块代码。
+
+---
+
+## 异常的参数
+
+一个异常可以带上参数，可作为输出的异常信息参数。
+你可以通过except语句来捕获异常的参数，如下所示：
+
+    try:
+        正常的操作
+       ......................
+    except ExceptionType, Argument:
+        你可以在这输出 Argument 的值...
+
+变量接收的异常值通常包含在异常的语句中。在元组的表单中变量可以接收一个或者多个值。
+元组通常包含错误字符串，错误数字，错误位置。
+
+以下为单个异常的实例：
+
+    # 定义函数
+    def temp_convert(var):
+        try:
+            return int(var)
+        except ValueError, Argument:
+            print "参数没有包含数字\n", Argument
+
+    # 调用函数
+    temp_convert("xyz");
+
+以上程序执行结果如下：
+
+    $ python test.py
+    参数没有包含数字
+    invalid literal for int() with base 10: 'xyz'
+
+---
+
+## 抛出异常
+
+我们可以使用raise语句自己触发异常，使用raise关键字，等同于C#和Java中的throw语句，其语法规则如下。
+
+    raise NameError("bad name!")
+
+## 自定义异常
+
+通过创建一个新的异常类，程序可以命名它们自己的异常。异常应该是典型的继承自Exception类，通过直接或间接的方式。
+以下为与RuntimeError相关的实例,实例中创建了一个类，基类为RuntimeError，用于在异常触发时输出更多的信息。
+在try语句块中，用户自定义的异常后执行except块语句，变量 e 是用于创建Networkerror类的实例。
+
+    class Networkerror(RuntimeError):
+        def __init__(self, arg):
+            self.args = arg
+
+在你定义以上类后，你可以触发该异常，如下所示：
+
+    try:
+        raise Networkerror("Bad hostname")
+    except Networkerror,e:
+        print e.args
+
+---
+
+## 异常种类
+
+Python所有的异常都是从BaseException类派生的，常见的异常类型和继承关系如下图：
+
+![img](/img/post-in/post-python-f-1.png)
+
+详细信息可查看这里[https://docs.python.org/2/library/exceptions.html#exception-hierarchy](https://docs.python.org/2/library/exceptions.html#exception-hierarchy)
+
+---
+
+## 总结
+
+此部分引用来自[https://segmentfault.com/a/1190000007736783](https://segmentfault.com/a/1190000007736783)
+
+**完整代码**
+
+    def div(a, b):
+        try:
+            print(a / b)
+        except ZeroDivisionError:
+            print("Error: b should not be 0 !!")
+        except Exception as e:
+            print("Unexpected Error: {}".format(e))
+        else:
+            print('Run into else only when everything goes well')
+        finally:
+            print('Always run into finally block.')
+
+    # tests
+    div(2, 0)
+    div(2, 'bad type')
+    div(1, 2)
+
+    # Mutiple exception in one line
+    try:
+        print(a / b)
+    except (ZeroDivisionError, TypeError) as e:
+        print(e)
+
+    # Except block is optional when there is finally
+    try:
+        open(database)
+    finally:
+        close(database)
+
+    # catch all errors and log it
+    try:
+        do_work()
+    except:    
+        # get detail from logging module
+        logging.exception('Exception caught!')
+
+        # get detail from sys.exc_info() method
+        error_type, error_value, trace_back = sys.exc_info()
+        print(error_value)
+        raise
+
+**总结**
+
+* except语句不是必须的，finally语句也不是必须的，但是二者必须要有一个，否则就没有try的意义了。
+* except语句可以有多个，Python会按except语句的顺序依次匹配你指定的异常，如果异常已经处理就不会再进入后面的except语句。
+* except语句可以以元组形式同时指定多个异常，参见实例代码。
+* except语句后面如果不指定异常类型，则默认捕获所有异常，你可以通过logging或者sys模块获取当前异常。
+* 如果要捕获异常后要重复抛出，请使用raise，后面不要带任何参数或信息。
+* 不建议捕获并抛出同一个异常，请考虑重构你的代码。
+* 不建议在不清楚逻辑的情况下捕获所有异常，有可能你隐藏了很严重的问题。
+* 尽量使用内置的异常处理语句来 替换try/except语句，比如with语句，getattr()方法。
+
+#### 传递异常 re-raise Exception
+
+捕捉到了异常，但是又想重新引发它（传递异常），使用不带参数的raise语句即可：
+
+    def f1():
+        print(1/0)
+
+    def f2():
+        try:
+            f1()
+        except Exception as e:
+            raise  # don't raise e !!!
+
+    f2()
+
+在Python2中，为了保持异常的完整信息，那么你捕获后再次抛出时千万不能在raise后面加上异常对象，否则你的trace信息就会从此处截断。以上是最简单的重新抛出异常的做法。
+
+还有一些技巧可以考虑，比如抛出异常前对异常的信息进行更新。
+
+    def f2():
+        try:
+            f1()
+        except Exception as e:
+            e.args += ('more info',)
+            raise
+
+如果你有兴趣了解更多，建议阅读[这篇博客](http://www.ianbicking.org/blog/2007/09/re-raising-exceptions.html)。
+
+#### Exception 和 BaseException
+
+当我们要捕获一个通用异常时，应该用Exception还是BaseException？我建议你还是看一下 官方文档说明，这两个异常到底有啥区别呢？ 请看它们之间的继承关系。
+
+    BaseException
+     +-- SystemExit
+     +-- KeyboardInterrupt
+     +-- GeneratorExit
+     +-- Exception
+          +-- StopIteration...
+          +-- StandardError...
+          +-- Warning...
+
+从Exception的层级结构来看，BaseException是最基础的异常类，Exception继承了它。BaseException除了包含所有的Exception外还包含了SystemExit，KeyboardInterrupt和GeneratorExit三个异常。
+
+有此看来你的程序在捕获所有异常时更应该使用Exception而不是BaseException，因为另外三个异常属于更高级别的异常，合理的做法应该是交给Python的解释器处理。
+
+#### except Exception as e和 except Exception, e
+
+代码示例如下：
+
+    try:
+        do_something()
+    except NameError as e:  # should
+        pass
+    except KeyError, e:  # should not
+        pass
+
+在Python2的时代，你可以使用以上两种写法中的任意一种。在Python3中你只能使用第一种写法，第二种写法被废弃掉了。第一个种写法可读性更好，而且为了程序的兼容性和后期移植的成本，请你也抛弃第二种写法。
+
+#### raise "Exception string"
+
+把字符串当成异常抛出看上去是一个非常简洁的办法，但其实是一个非常不好的习惯。
+
+    if is_work_done():
+        pass
+    else:
+        raise "Work is not done!" # not cool
+
+上面的语句如果抛出异常，那么会是这样的：
+
+    Traceback (most recent call last):
+      File "/demo/exception_hanlding.py", line 48, in <module>
+        raise "Work is not done!"
+    TypeError: exceptions must be old-style classes or derived from BaseException, not str
+
+这在Python2.4以前是可以接受的做法，但是没有指定异常类型有可能会让下游没办法正确捕获并处理这个异常，从而导致你的程序挂掉。简单说，这种写法是是封建时代的陋习，应该扔了。
+
+#### 使用内置的语法范式代替try/except
+
+Python 本身提供了很多的语法范式简化了异常的处理，比如for语句就处理的StopIteration异常，让你很流畅地写出一个循环。
+
+with语句在打开文件后会自动调用finally中的关闭文件操作。我们在写Python代码时应该尽量避免在遇到这种情况时还使用try/except/finally的思维来处理。
+
+    # should not
+    try:
+        f = open(a_file)
+        do_something(f)
+    finally:
+        f.close()
+
+    # should
+    with open(a_file) as f:
+        do_something(f)
+
+再比如，当我们需要访问一个不确定的属性时，有可能你会写出这样的代码：
+
+    try:
+        test = Test()
+        name = test.name  # not sure if we can get its name
+    except AttributeError:
+        name = 'default'
+
+其实你可以使用更简单的getattr()来达到你的目的。
+
+    name = getattr(test, 'name', 'default')
