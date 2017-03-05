@@ -46,7 +46,7 @@ Here we go!
 
 SD卡不建议购买装好树莓派系统的，因为不能保证系统为最新系统，最好买空白卡进行自己安装。
 
-本文为无显示器的树莓派教程，当然如果你想搭配显示器也可以自行选择触摸屏和相关的鼠标键盘（树莓派专用）来打造树莓派。
+本文为无显示器的树莓派教程，当然如果你想搭配显示器也可以自行选择触摸屏和相关的鼠标键盘（树莓派专用）来打造树莓派。后来经过尝试一般的鼠标键盘也是可以连接树莓派3的，显示器连接只需一根HDMI线就可以了。
 
 ---
 
@@ -88,11 +88,17 @@ Windows系统上可以用 [Win32 Disk Imager](https://sourceforge.net/projects/w
 
 树莓派开机后，在无显示器的情况下，我们还无法正常访问，此时需要一根网线一端连接树莓派，一端连接路由器，然后在电脑中打开浏览器，在你的路由器管理界面查看主机名叫做“raspberrypi”的设备的IP地址，则为目前路由器为树莓派分配的IP。
 
+![img](/img/post-in/post-pi-ip.png)
+
 通过此IP，我们就可以通过SSH协议访问树莓派了（树莓派3代是默认打开SSH服务的），此时我们需要下载SSH客户端进行连接树莓派，Windows系统可以使用[PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html)。
+
+![img](/img/post-in/post-pi-putty.png)
 
 pi的默认用户名、密码分别是pi、raspberry。
 
 密码输入正确后，可以看到：
+
+![img](/img/post-in/post-pi-ssh.png)
 
 
 在无法远程访问树莓派的情况下，官方文档还提供了一种方法来手动让SSH开机自启。在向SD卡写入镜像完成后，你会在“此电脑”中看到SD卡的“boot”分区。在这个“boot”分区的根目录下新建一个没有拓展名，名字为的“ssh”空文件，就能开机启用SSH。
@@ -101,9 +107,73 @@ pi的默认用户名、密码分别是pi、raspberry。
 
 ## 设置WiFi连接
 
----
+#### 修改/etc/network/interfaces
 
-## 后续
+运行 sudo vim /etc/network/interfaces 命令，打开后作如下修改：
+
+    auto lo eth0 wlan0 wlan1
+
+    iface lo inet loopback
+    iface eth0 inet dhcp
+
+    allow-hotplug wlan0 wlan1
+
+    iface wlan0 inet dhcp
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+    iface wlan1 inet manual
+    pre-up which owifi
+    up owifi start
+    down owifi stop
+
+#### 修改/etc/wpa_supplicant/wpa_supplicant.conf
+
+除  /etc/network/interfaces  之外，你还需要修改  /etc/wpa_supplicant/wpa_supplicant.conf。
+
+运行 sudo vim /etc/wpa_supplicant/wpa_supplicant.conf 命令，
+打开  /etc/wpa_supplicant/wpa_supplicant.conf  照着下面的样子添加（请不要删除原先就已经存在的任何行）：
+
+    # 最常用的配置。WPA-PSK 加密方式。
+    network={
+    ssid="WiFi-name1"
+    psk="WiFi-password1"
+    priority=5
+    }
+
+    network={
+    ssid="WiFi-name2"
+    psk="WiFi-password2"
+    priority=4
+    }
+
+priority 是指连接优先级，数字越大优先级越高（不可以是负数）。
+
+按照自己的实际情况，修改这个文件。
+
+例如，你家中有3个WiFi，分别为WiFi-A、WiFi-B和WiFi-C。你希望树莓派的连接优先级为 WiFi-A>WiFi-B>WiFi-C，则整个配置文件看起来像这样：
+
+    ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+    update_config=1
+
+    network={
+        ssid="WiFi-A"
+        psk="12345678"
+        priority=5
+    }
+
+    network={
+        ssid="WiFi-B"
+        psk="12345678"
+        priority=4
+    }
+
+    network={
+        ssid="WiFi-C"
+        psk="12345678"
+        priority=3
+    }
+
+到这里WiFi配置就结束了，重启树莓派后，树莓派将自动连接到WiFi，你可以不用网线直接从路由器管理页面找到对应的IP，然后通过SHH访问树莓派。当然通过这种方式树莓派的IP是动态分配的，我们需要设置静态IP，如果想要更方便还可以给树莓派设置域名，通过域名访问树莓派。
 
 ---
 
