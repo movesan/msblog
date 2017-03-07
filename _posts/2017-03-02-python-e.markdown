@@ -16,6 +16,7 @@ tags:
 >[Python从零单排系列（三）---Python函数](http://movesan.me/2017/02/27/python-c/)<br>
 >[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/03/01/python-d/)<br>
 >[Python从零单排系列（六）---异常处理](http://movesan.me/2017/03/03/python-f/)<br>
+>[Python从零单排系列（七）---函数式编程](http://movesan.me/2017/03/07/python-g/)<br>
 
 ---
 

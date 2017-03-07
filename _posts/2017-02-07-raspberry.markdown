@@ -126,6 +126,13 @@ pi的默认用户名、密码分别是pi、raspberry。
     up owifi start
     down owifi stop
 
+建议，若你不使用树莓派的有线网口连接网络的话，最好把  /etc/network/interfaces  文件第一行（也可能不在第一行）中 auto lo eth0 wlan0 的 eth0 删掉。因为它会导致树莓派开机时等待有线网卡
+动态分配IP，但实际上你的有线网口并没有连接到路由器，这里会让内核等待更长的时间，从而拖慢开机速度。
+
+但是要注意，删掉 eth0 的话就意味着无法通过网线连接路由器了，要想连接就必须重新加上 eth0 。第一次设置WiFi连接后接网线一直连不上，因为你可能不在家或者换到其他网络环境，所以想要连接树莓派还需要
+通过网线连接才能添加新的WiFi，所以这里要注意下。
+
+
 #### 修改/etc/wpa_supplicant/wpa_supplicant.conf
 
 除  /etc/network/interfaces  之外，你还需要修改  /etc/wpa_supplicant/wpa_supplicant.conf。
@@ -182,3 +189,4 @@ priority 是指连接优先级，数字越大优先级越高（不可以是负�
 [[linux]树莓派入手体验和系统安装 - Ron Ngai](http://www.cnblogs.com/rond/p/4970071.html)<br>
 [RASPBERRY PI 3 MODEL B系統安裝指南 - skynet](http://hophd.com/raspberry-pi-3-model-b-installation/)<br>
 [Raspberry Pi 3 无显示器 安装指南 - xusiwei's blog](https://xusiwei.github.io/post/2016/raspberry-pi-headless-setup/)<br>
+[树莓派连接WiFi（最稳定的方法） - cmgine](https://i.cmgine.net/archives/11053.html)<br>
