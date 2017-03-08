@@ -1,0 +1,295 @@
+---
+layout:     post
+title:      "Python从零单排系列（八）---Python高级特性"
+subtitle:   " Python编程的高级技巧 "
+date:       2017-03-08 6:25:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-python.png"
+catalog: true
+tags:
+    - Python
+
+---
+
+>[Python从零单排系列（一）---初识Python](http://movesan.me/2017/02/20/python-a/)<br>
+>[Python从零单排系列（二）---Python基础](http://movesan.me/2017/02/22/python-b/)<br>
+>[Python从零单排系列（三）---Python函数](http://movesan.me/2017/02/27/python-c/)<br>
+>[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/03/01/python-d/)<br>
+>[Python从零单排系列（五）---模块化以及相关库](http://movesan.me/2017/03/02/python-e/)<br>
+>[Python从零单排系列（六）---异常处理](http://movesan.me/2017/03/03/python-f/)<br>
+>[Python从零单排系列（七）---函数式编程](http://movesan.me/2017/03/07/python-g/)<br>
+
+---
+
+## 引言
+
+在Python中，代码不是越多越好，而是越少越好；代码不是越复杂越好，而是越简单越好。一行代码实现的功能，绝不写多行代码，我们通过之前的掌握的知识完全可以写出Python程序，但要写出一套简洁的代码，
+就要借助Python语言的一些高级特性。
+
+---
+
+## 循环设计
+
+#### range()
+
+在Python中，for循环后的in跟随一个序列的话，循环每次使用的序列元素，而不是序列的下标。
+
+之前我们已经使用过 range() 来控制for循环。现在，我们继续开发range的功能，以实现下标对循环的控制：
+
+    S = 'abcdefghijk'
+    for i in range(0,len(S),2):
+        print S[i]
+
+在该例子中，我们利用 len() 函数和 range() 函数，用 i 作为 S 序列的下标来控制循环。在range函数中，分别定义上限，下限和每次循环的步长。这就和Java语言中的for循环相类似了。
+
+#### enumerate()
+
+利用enumerate()函数，可以在每次循环中同时得到下标和元素：
+
+    S = 'abcdefghijk'
+    for (index,char) in enumerate(S):
+        print index
+        print char
+
+实际上，enumerate()在每次循环中，返回的是一个包含两个元素的定值表(tuple)，两个元素分别赋予index和char。
+
+#### zip()
+
+如果你多个等长的序列，然后想要每次循环时从各个序列分别取出一个元素，可以利用zip()方便地实现：
+
+    ta = [1,2,3]
+    tb = [9,8,7]
+    tc = ['a','b','c']
+    for (a,b,c) in zip(ta,tb,tc):
+        print(a,b,c)
+
+每次循环时，从各个序列分别从左到右取出一个元素，合并成一个tuple，然后tuple的元素赋予给a,b,c 。
+
+zip()函数的功能，就是从多个列表中，依次各取出一个元素。每次取出的(来自不同列表的)元素合成一个元组，合并成的元组放入zip()返回的列表中。zip()函数起到了聚合列表的功能。
+
+我们可以分解聚合后的列表，如下:
+
+    ta = [1,2,3]
+    tb = [9,8,7]
+
+    # cluster
+    zipped = zip(ta,tb)
+    print(zipped)
+
+    # decompose
+    na, nb = zip(*zipped)
+    print(na, nb)
+
+---
+
+## 循环对象
+
+#### 什么是循环对象
+
+循环对象是这样一个对象，它包含有一个next()方法 ( \__next__() 方法，在python 3x中 )， 这个方法的目的是进行到下一个结果，而在结束一系列结果之后，举出StopIteration错误。
+
+当一个循环结构（比如for）调用循环对象时，它就会每次循环的时候调用next()方法，直到StopIteration出现，for循环接收到，就知道循环已经结束，停止调用next()。
+
+假设我们有一个test.txt的文件:
+
+    1234
+    abcd
+    efg
+
+我们运行一下python命令行：
+
+    >>>f = open('test.txt')
+
+    >>>f.next()
+
+    >>>f.next()
+
+    ...
+
+不断输入f.next()，直到最后出现StopIteration 。
+
+open()返回的实际上是一个循环对象，包含有next()方法。而该next()方法每次返回的就是新的一行的内容，到达文件结尾时举出StopIteration。这样，我们相当于手工进行了循环。
+
+自动进行的话，就是：
+
+    for line in open('test.txt'):
+        print line
+
+在这里，for结构自动调用next()方法，将该方法的返回值赋予给line。循环直到出现StopIteration的时候结束。
+
+那么，如何判断一个对象是可迭代对象呢？方法是通过collections模块的Iterable类型判断：
+
+    >>> from collections import Iterable
+    >>> isinstance('abc', Iterable) # str是否可迭代
+    True
+    >>> isinstance([1,2,3], Iterable) # list是否可迭代
+    True
+    >>> isinstance(123, Iterable) # 整数是否可迭代
+    False
+
+相对于序列，用循环对象的好处在于：不用在循环还没有开始的时候，就生成好要使用的元素。所使用的元素可以在循环过程中逐次生成。这样，节省了空间，提高了效率，编程更灵活。
+
+#### 切片
+
+取一个list或tuple的部分元素是非常常见的操作。比如，一个list如下：
+
+    >>> L = ['Michael', 'Sarah', 'Tracy', 'Bob', 'Jack']
+
+取前3个元素，应该怎么做？
+
+笨办法：
+
+    >>> [L[0], L[1], L[2]]
+    ['Michael', 'Sarah', 'Tracy']
+
+之所以是笨办法是因为扩展一下，取前N个元素就没辙了。
+
+取前N个元素，也就是索引为0-(N-1)的元素，可以用循环：
+
+    >>> r = []
+    >>> n = 3
+    >>> for i in range(n):
+    ...     r.append(L[i])
+    ...
+    >>> r
+    ['Michael', 'Sarah', 'Tracy']
+
+对这种经常取指定索引范围的操作，用循环十分繁琐，因此，Python提供了切片（Slice）操作符，能大大简化这种操作。
+
+对应上面的问题，取前3个元素，用一行代码就可以完成切片：
+
+    >>> L[0:3]
+    ['Michael', 'Sarah', 'Tracy']
+
+L[0:3]表示，从索引0开始取，直到索引3为止，但不包括索引3。即索引0，1，2，正好是3个元素。
+
+如果第一个索引是0，还可以省略：
+
+    >>> L[:3]
+    ['Michael', 'Sarah', 'Tracy']
+
+也可以从索引1开始，取出2个元素出来：
+
+    >>> L[1:3]
+    ['Sarah', 'Tracy']
+
+类似的，既然Python支持L[-1]取倒数第一个元素，那么它同样支持倒数切片，试试：
+
+    >>> L[-2:]
+    ['Bob', 'Jack']
+    >>> L[-2:-1]
+    ['Bob']
+
+记住倒数第一个元素的索引是-1。
+
+在很多编程语言中，针对字符串提供了很多各种截取函数，其实目的就是对字符串切片。Python没有针对字符串的截取函数，只需要切片一个操作就可以完成，非常简单。
+
+#### 迭代器
+
+从技术上来说，循环对象和for循环调用之间还有一个中间层，就是要将循环对象转换成迭代器(iterator)。这一转换是通过使用iter()函数实现的。但从逻辑层面上，常常可以忽略这一层，所以循环对象和迭代器常常相互指代对方。
+
+#### 列表生成器
+
+列表生成式即List Comprehensions，是Python内置的非常简单却强大的可以用来创建list的生成式。
+
+举个例子，要生成list [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]可以用range(1, 11)：
+
+    >>> range(1, 11)
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+但如果要生成[1x1, 2x2, 3x3, ..., 10x10]怎么做？方法一是循环：
+
+    >>> L = []
+    >>> for x in range(1, 11):
+    ...    L.append(x * x)
+    ...
+    >>> L
+    [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+但是循环太繁琐，而列表生成式则可以用一行语句代替循环生成上面的list：
+
+    >>> [x * x for x in range(1, 11)]
+    [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+写列表生成式时，把要生成的元素x * x放到前面，后面跟for循环，就可以把list创建出来，十分有用，多写几次，很快就可以熟悉这种语法。
+
+for循环后面还可以加上if判断，这样我们就可以筛选出仅偶数的平方：
+
+    >>> [x * x for x in range(1, 11) if x % 2 == 0]
+    [4, 16, 36, 64, 100]
+
+还可以使用两层循环，可以生成全排列：
+
+    >>> [m + n for m in 'ABC' for n in 'XYZ']
+    ['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']
+
+三层和三层以上的循环就很少用到了。
+
+运用列表生成式，可以写出非常简洁的代码。例如，列出当前目录下的所有文件和目录名，可以通过一行代码实现：
+
+    >>> import os # 导入os模块
+    >>> [d for d in os.listdir('.')] # os.listdir可以列出文件和目录
+    ['.emacs.d', '.ssh', '.Trash', 'Adlm', 'Applications', 'Desktop', 'Documents', 'Downloads', 'Library', 'Movies', 'Music', 'Pictures', 'Public', 'VirtualBox VMs', 'Workspace', 'XCode']
+
+#### 生成器
+
+通过列表生成式，我们可以直接创建一个列表。但是，受到内存限制，列表容量肯定是有限的。而且，创建一个包含100万个元素的列表，不仅占用很大的存储空间，如果我们仅仅需要访问前面几个元素，
+那后面绝大多数元素占用的空间都白白浪费了。
+
+所以，如果列表元素可以按照某种算法推算出来，那我们是否可以在循环的过程中不断推算出后续的元素呢？这样就不必创建完整的list，从而节省大量的空间。在Python中，这种一边循环一边计算的机制，称为生成器（Generator）。
+
+生成器(generator)的主要目的是构成一个用户自定义的循环对象。
+
+要创建一个generator，有很多种方法。第一种方法很简单，只要把一个列表生成式的[]改成()，就创建了一个generator：
+
+    >>> L = [x * x for x in range(10)]
+    >>> L
+    [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+    >>> g = (x * x for x in range(10))
+    >>> g
+    <generator object <genexpr> at 0x104feab40>
+
+创建L和g的区别仅在于最外层的[]和()，L是一个list，而g是一个generator。
+
+第二种方法，举个简单的例子，定义一个generator，依次返回数字1，3，5：
+
+    >>> def odd():
+    ...     print 'step 1'
+    ...     yield 1
+    ...     print 'step 2'
+    ...     yield 3
+    ...     print 'step 3'
+    ...     yield 5
+    ...
+    >>> o = odd()
+    >>> o.next()
+    step 1
+    1
+    >>> o.next()
+    step 2
+    3
+    >>> o.next()
+    step 3
+    5
+    >>> o.next()
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    StopIteration
+
+该生成器共有三个yield， 如果用作循环器时，会进行三次循环。可以看到，odd不是普通函数，而是generator，在执行过程中，遇到yield就中断，下次又继续执行。执行3次yield后，已经没有yield可以执行了，
+所以，第4次调用next()就报错。
+
+生成器的编写方法和函数定义类似，只是在return的地方改为yield。生成器中可以有多个yield。当生成器遇到一个yield时，会暂停运行生成器，返回yield后面的值。当再次调用生成器的时候，
+会从刚才暂停的地方继续运行，直到下一个yield。生成器自身又构成一个循环器，每次循环使用一个yield返回的值。
+
+同样的，把函数改成generator后，我们基本上从来不会用next()来调用它，而是直接使用for循环来迭代：
+
+    >>> for n in odd(6):
+    ...     print n
+    ...
+    step 1
+    1
+    step 2
+    3
+    step 3
+    5

@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "关于HTTP协议，一篇就够了"
+title:      "HTTP协议知识扫盲---你要的都在这了"
 subtitle:   " Hyper Text Transfer Protocol "
 date:       2017-03-06 6:25:00
 author:     "Movesan"
@@ -8,6 +8,7 @@ header-img: "img/post-bg/post-bg-http.png"
 catalog: true
 tags:
     - HTTP
+    - 网络协议
 
 ---
 
@@ -304,5 +305,5 @@ Content-Type，内容类型，一般是指网页中存在的Content-Type，用�
 ## 引用链接
 
 [HTTP协议简介 - 廖雪峰](http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832653051fd44e44e4f9e4ed08f3e5a5ab550358d000)<br>
-[HTTP教程 - w3cschool](http://www.w3cschool.cn/http/a96bxfml.html)
-[]()
+[HTTP教程 - w3cschool](http://www.w3cschool.cn/http/a96bxfml.html)<br>
+[关于HTTP协议，一篇就够了 - RaphetS](http://www.jianshu.com/p/80e25cb1d81a)

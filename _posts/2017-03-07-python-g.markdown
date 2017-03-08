@@ -17,6 +17,7 @@ tags:
 >[Python从零单排系列（四）---面向对象编程](http://movesan.me/2017/03/01/python-d/)<br>
 >[Python从零单排系列（五）---模块化以及相关库](http://movesan.me/2017/03/02/python-e/)<br>
 >[Python从零单排系列（六）---异常处理](http://movesan.me/2017/03/03/python-f/)<br>
+>[Python从零单排系列（八）---Python高级特性](http://movesan.me/2017/03/08/python-h/)<br>
 
 ---
 
@@ -214,6 +215,216 @@ filter()有四个参数，第一个参数是一个可迭代对象，第二个是
     ['Zoo', 'Credit', 'bob', 'about']
 
 以上就是Python中几个常见的內建高阶函数，像这种把函数作为参数传入的函数称为高阶函数。除了上述列举的，Python中还有像all()、any()、enumerate()、zip()等也都是高阶函数。
+
+---
+
+## 闭包
+
+闭包(closure)是函数式编程的重要的语法结构。在Python中，一个闭包就是你调用了一个函数A，这个函数A返回了一个函数B给你。这个返回的函数B就叫做闭包。
+你在调用函数A的时候传递的参数就是自由变量。
+
+举个例子：
+
+    def func(name):
+        def inner_func(age):
+            print 'name:', name, 'age:', age
+        return inner_func
+
+    bb = func('the5fire')
+    bb(26)  # >>> name: the5fire age: 26
+
+这里面调用func的时候就产生了一个闭包——inner_func,并且该闭包持有自由变量——name，因此这也意味着，当函数func的生命周期结束之后，name这个变量依然存在，因为它被闭包引用了，所以不会被回收。
+
+另一个需要注意的问题是，返回的函数并没有立刻执行，而是直到调用了bb()才执行。我们再来看一个例子：
+
+    def count():
+        fs = []
+        for i in range(1, 4):
+            def f():
+                 return i*i
+            fs.append(f)
+        return fs
+
+    f1, f2, f3 = count()
+
+在上面的例子中，每次循环，都创建了一个新的函数，然后，把创建的3个函数都返回了。
+
+你可能认为调用f1()，f2()和f3()结果应该是1，4，9，但实际结果是：
+
+    >>> f1()
+    9
+    >>> f2()
+    9
+    >>> f3()
+    9
+
+全部都是9！原因就在于返回的函数引用了变量i，但它并非立刻执行。等到3个函数都返回时，它们所引用的变量i已经变成了3，因此最终结果为9。
+
+返回闭包时牢记的一点就是：返回函数不要引用任何循环变量，或者后续会发生变化的变量。
+
+如果一定要引用循环变量怎么办？方法是再创建一个函数，用该函数的参数绑定循环变量当前的值，无论该循环变量后续如何更改，已绑定到函数参数的值不变：
+
+    >>> def count():
+    ...     fs = []
+    ...     for i in range(1, 4):
+    ...         def f(j):
+    ...             def g():
+    ...                 return j*j
+    ...             return g
+    ...         fs.append(f(i))
+    ...     return fs
+    ...
+    >>> f1, f2, f3 = count()
+    >>> f1()
+    1
+    >>> f2()
+    4
+    >>> f3()
+    9
+
+另外再说一点，闭包并不是Python中特有的概念，所有把函数做为一等公民的语言均有闭包的概念。不过像Java这样以class为一等公民的语言中也可以使用闭包，只是它得用类或接口来实现。
+
+---
+
+## 装饰器
+
+装饰器(decorator)是一种高级Python语法。装饰器可以对一个函数、方法或者类进行加工。在Python中，我们有多种方法对函数和类进行加工，比如在Python闭包中，我们见到函数对象作为某一个函数的返回结果。相对于其它方式，装饰器语法简单，代码可读性高。因此，装饰器在Python项目中有广泛的应用。
+
+#### 装饰函数
+
+由于函数也是一个对象，而且函数对象可以被赋值给变量，所以，通过变量也能调用该函数。
+
+    >>> def now():
+    ...     print '2016-12-25'
+    ...
+    >>> f = now
+    >>> f()
+    2016-12-25
+
+函数对象有一个__name__属性，可以拿到函数的名字：
+
+    >>> now.__name__
+    'now'
+    >>> f.__name__
+    'now'
+
+现在，假设我们要增强now()函数的功能，比如，在函数调用前后自动打印日志，但又不希望修改now()函数的定义，这种在代码运行期间动态增加功能的方式，称之为“装饰器”（Decorator）。
+
+本质上，decorator就是一个返回函数的高阶函数。所以，我们要定义一个能打印日志的decorator，可以定义如下：
+
+    def log(func):
+        def wrapper(*args, **kw):
+            print 'call %s():' % func.__name__
+            return func(*args, **kw)
+        return wrapper
+
+观察上面的log，因为它是一个decorator，所以接受一个函数作为参数，并返回一个函数。我们要借助Python的@语法，把decorator置于函数的定义处：
+
+    @log
+    def now():
+        print '2016-12-25'
+
+调用now()函数，不仅会运行now()函数本身，还会在运行now()函数前打印一行日志：
+
+    >>> now()
+    call now():
+    2016-12-25
+
+把@log放到now()函数的定义处，相当于执行了语句：
+
+    now = log(now)
+
+由于log()是一个decorator，返回一个函数，所以，原来的now()函数仍然存在，只是现在同名的now变量指向了新的函数，于是调用now()将执行新函数，即在log()函数中返回的wrapper()函数。
+
+wrapper()函数的参数定义是(*args, **kw)，因此，wrapper()函数可以接受任意参数的调用。在wrapper()函数内，首先打印日志，再紧接着调用原始函数。
+
+如果decorator本身需要传入参数，那就需要编写一个返回decorator的高阶函数，写出来会更复杂。比如，要自定义log的文本：
+
+    def log(text):
+        def decorator(func):
+            def wrapper(*args, **kw):
+                print '%s %s():' % (text, func.__name__)
+                return func(*args, **kw)
+            return wrapper
+        return decorator
+    这个3层嵌套的decorator用法如下：
+
+    @log('execute')
+    def now():
+        print '2016-12-25'
+
+执行结果如下：
+
+    >>> now()
+    execute now():
+    2016-12-25
+
+和两层嵌套的decorator相比，3层嵌套的效果是这样的：
+
+    >>> now = log('execute')(now)
+
+我们来剖析上面的语句，首先执行log('execute')，返回的是decorator函数，再调用返回的函数，参数是now函数，返回值最终是wrapper函数。
+
+以上两种decorator的定义都没有问题，但还差最后一步。因为我们讲了函数也是对象，它有\__name__等属性，但你去看经过decorator装饰之后的函数，它们的\__name__已经从原来的'now'变成了'wrapper'：
+
+    >>> now.__name__
+    'wrapper'
+
+因为返回的那个wrapper()函数名字就是'wrapper'，所以，需要把原始函数的__name__等属性复制到wrapper()函数中，否则，有些依赖函数签名的代码执行就会出错。
+
+不需要编写wrapper.\__name__ = func.\__name__这样的代码，Python内置的functools.wraps就是干这个事的，所以，一个完整的decorator的写法如下：
+
+    import functools
+
+    def log(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kw):
+            print 'call %s():' % func.__name__
+            return func(*args, **kw)
+        return wrapper
+
+或者针对带参数的decorator：
+
+    import functools
+
+    def log(text):
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kw):
+                print '%s %s():' % (text, func.__name__)
+                return func(*args, **kw)
+            return wrapper
+        return decorator
+
+#### 装饰类
+
+在上面的例子中，装饰器接收一个函数，并返回一个函数，从而起到加工函数的效果。在Python 2.6以后，装饰器被拓展到类。一个装饰器可以接收一个类，并返回一个类，从而起到加工类的效果。
+
+    def decorator(aClass):
+        class newClass:
+            def __init__(self, age):
+                self.total_display   = 0
+                self.wrapped         = aClass(age)
+            def display(self):
+                self.total_display += 1
+                print("total display", self.total_display)
+                self.wrapped.display()
+        return newClass
+
+    @decorator
+    class Bird:
+        def __init__(self, age):
+            self.age = age
+        def display(self):
+            print("My age is",self.age)
+
+    eagleLord = Bird(5)
+    for i in range(3):
+        eagleLord.display()
+
+在decorator中，我们返回了一个新类newClass。在新类中，我们记录了原来类生成的对象（self.wrapped），并附加了新的属性total_display，用于记录调用display的次数。我们也同时更改了display方法。
+
+通过修改，我们的Bird类可以显示调用display的次数了。
 
 ---
 
