@@ -1,0 +1,176 @@
+---
+layout:     post
+title:      "Mybatis3源码分析（01） --- 初始化机制"
+subtitle:   "  "
+date:       2019-06-25 6:25:00
+author:     "Movesan"
+header-img: "img/post-bg/post-bg-network.jpg"
+catalog: true
+tags:
+    - Mybatis
+
+---
+
+
+## 概述
+
+公司项目中基本都用到了 Mybatis，前段时间出现了一个线上问题：项目中MySQL是采用的读写分离的主从模式，有一个业务场景是写完之后立刻读，由于主从同步延迟的问题导致未能读到数据，我们采用的方案是借助于 Sharding-JDBC 的 Hint 强制路由主库机制，但是线上反应出来的情况是并未能按设想的从主库中返回数据。后来经过排查发现是 Mybatis 一级缓存导致第二次查询未能走数据库，也借此机会熟悉了下 Sharding-JDBC 和 Mybatis 的源码，至此才有了本系列的文章。
+
+> 本系列文章的 Mybatis 源码版本为：3.5.2
+
+## Mybatis 基本原理
+
+每个基于 MyBatis 的应用都是以一个 SqlSessionFactory 的实例为核心的。SqlSessionFactory 的实例可以通过 SqlSessionFactoryBuilder 获得。而 SqlSessionFactoryBuilder 则可以从 XML 配置文件或一个预先配置的 Configuration 实例来构建出 SqlSessionFactory 实例。
+
+有了 SqlSessionFactory，顾名思义，我们可以从中获得 SqlSession 的实例。SqlSession 提供了在数据库执行 SQL 命令所需的所有方法。你可以通过 SqlSession 实例来直接执行已映射的 SQL 语句。例如：
+```Java
+try (SqlSession session = sqlSessionFactory.openSession()) {
+  Blog blog = (Blog) session.selectOne("org.mybatis.example.BlogMapper.selectBlog", 101);
+}
+```
+
+或使用和指定语句的参数和返回值相匹配的接口（比如 BlogMapper.class）。例如：
+```Java
+try (SqlSession session = sqlSessionFactory.openSession()) {
+  BlogMapper mapper = session.getMapper(BlogMapper.class);
+  Blog blog = mapper.selectBlog(101);
+}
+```
+
+**SqlSessionFactoryBuilder**:创建 SqlSessionFactory，最佳作用域是方法作用域（也就是局部方法变量）
+**SqlSessionFactory**:创建 SqlSession，最佳作用域是应用作用域
+**SqlSession**:获取一个对应的映射器（Mapper）实例，最佳的作用域是请求或方法作用域
+**Mapper实例**:执行最终的 SQL 语句，通过生成 MapperProxy 代理类
+
+#### 基于 XML 构建 SqlSessionFactory
+
+可以使用类路径下的资源文件进行配置。也可以使用任意的输入流（InputStream）实例，比如用文件路径字符串或 file:// URL 构造的输入流。MyBatis 包含一个名叫 Resources 的工具类，它包含一些实用方法，使得从类路径或其它位置加载资源文件更加容易。
+
+```Java
+String resource = "org/mybatis/example/mybatis-config.xml";
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+```
+
+#### 不使用 XML 构建 SqlSessionFactory
+
+如果你更愿意直接从 Java 代码而不是 XML 文件中创建配置，或者想要创建你自己的配置建造器，MyBatis 也提供了完整的配置类，提供了所有与 XML 文件等价的配置项。
+
+```Java
+DataSource dataSource = BlogDataSourceFactory.getBlogDataSource();
+TransactionFactory transactionFactory = new JdbcTransactionFactory();
+Environment environment = new Environment("development", transactionFactory, dataSource);
+Configuration configuration = new Configuration(environment);
+configuration.addMapper(BlogMapper.class);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+```
+
+## Mybatis 初始化工作
+
+Mybatis 的初始化过程主要是通过 SqlSessionFactoryBuilder 创建 SqlSessionFactory 实例，从上面可以看到创建 SqlSessionFactory 实例可以有两种方式，最常用的是通过 XML 来进行构建，那么将会加载 Mybatis 的配置文件，Mybatis 会有个 Configuration 对象，从名称可以看出此对象为配置信息，在 SqlSessionFactoryBuilder().build() 方法中，会将 XML 中的配置信息一一映射到 Configuration 对象中，通过 Configuration 对象构建 DefaultSqlSessionFactory 实例。
+
+所以综上可以看出，Mybatis 的初始化工作主要是解析 XML 文件，创建 Configuration 实例的过程。
+
+## Configuration 对象
+
+MyBatis 的配置文件包含了会深深影响 MyBatis 行为的设置和属性信息。 配置文档的顶层结构如下：
+
+* configuration（配置）
+* properties（属性）
+* settings（设置）
+* typeAliases（类型别名）
+* typeHandlers（类型处理器）
+* bjectFactory（对象工厂）
+* plugins（插件）
+* environments（环境配置）
+    ** environment（环境变量）
+        *** transactionManager（事务管理器）
+        *** dataSource（数据源）
+* databaseIdProvider（数据库厂商标识）
+* mappers（映射器）
+
+Configuration 的属性主要分为两大部分：
+  * 从 mybatis-config.xml 中读取的配置
+  * 从 Mapper 配置文件或 Mapper 注解读取的配置
+
+#### 从 mybatis-config.xml 文件中对应的属性
+
+```Java
+protected Environment environment;
+
+  protected boolean safeRowBoundsEnabled;
+  protected boolean safeResultHandlerEnabled = true;
+  protected boolean mapUnderscoreToCamelCase;
+  protected boolean aggressiveLazyLoading;
+  protected boolean multipleResultSetsEnabled = true;
+  protected boolean useGeneratedKeys;
+  protected boolean useColumnLabel = true;
+  protected boolean cacheEnabled = true;
+  protected boolean callSettersOnNulls;
+  protected boolean useActualParamName = true;
+  protected boolean returnInstanceForEmptyRow;
+
+  protected String logPrefix;
+  protected Class<? extends Log> logImpl;
+  protected Class<? extends VFS> vfsImpl;
+  protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+  protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+  protected Integer defaultStatementTimeout;
+  protected Integer defaultFetchSize;
+  protected ResultSetType defaultResultSetType;
+  protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+  protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+  protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
+
+  protected Properties variables = new Properties();
+  protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+  protected ObjectFactory objectFactory = new DefaultObjectFactory();
+  protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+
+  protected boolean lazyLoadingEnabled = false;
+  protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
+
+  protected String databaseId;
+  /**
+   * Configuration factory class.
+   * Used to create Configuration for loading deserialized unread properties.
+   *
+   * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300 (google code)</a>
+   */
+  protected Class<?> configurationFactory;
+
+  protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+  protected final InterceptorChain interceptorChain = new InterceptorChain();
+  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+  protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+```
+
+#### 从 Mapper 配置文件中读取的属性
+
+```Java
+protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
+    .conflictMessageProducer((savedValue, targetValue) ->
+        ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
+```
+
+其中最主要的也是相对复杂的有如下两个(Mapper配置文件也主要是配置这两项):
+* mappedStatements属性，保存了所有Mapper配置文件中的select/update/insert/delete节点信息。属性类型为一个Map,key为sql对应的ID,MappedSatement为一个java对象，保存了一个select/update/insert/delete的节点信息。
+* resultMaps属性，保存了所有Mapper配置文件中的resultMap节点。
+
+
+## Configuration 对象创建过程
+
+
+
+---
+
+## 引用链接
+
+[IP地址，子网掩码、默认网关，DNS服务器是什么意思?](http://www.cnblogs.com/songQQ/archive/2009/05/27/1490612.html) <br>
+[网关 - 百度百科](http://baike.baidu.com/view/807.htm) <br>
