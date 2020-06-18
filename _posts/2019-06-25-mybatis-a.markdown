@@ -83,9 +83,9 @@ MyBatis 的配置文件包含了会深深影响 MyBatis 行为的设置和属性
 * bjectFactory（对象工厂）
 * plugins（插件）
 * environments（环境配置）
-    ** environment（环境变量）
-        *** transactionManager（事务管理器）
-        *** dataSource（数据源）
+    * environment（环境变量）
+        * transactionManager（事务管理器）
+        * dataSource（数据源）
 * databaseIdProvider（数据库厂商标识）
 * mappers（映射器）
 
@@ -98,53 +98,53 @@ Configuration 的属性主要分为两大部分：
 ```Java
 protected Environment environment;
 
-  protected boolean safeRowBoundsEnabled;
-  protected boolean safeResultHandlerEnabled = true;
-  protected boolean mapUnderscoreToCamelCase;
-  protected boolean aggressiveLazyLoading;
-  protected boolean multipleResultSetsEnabled = true;
-  protected boolean useGeneratedKeys;
-  protected boolean useColumnLabel = true;
-  protected boolean cacheEnabled = true;
-  protected boolean callSettersOnNulls;
-  protected boolean useActualParamName = true;
-  protected boolean returnInstanceForEmptyRow;
+protected boolean safeRowBoundsEnabled;
+protected boolean safeResultHandlerEnabled = true;
+protected boolean mapUnderscoreToCamelCase;
+protected boolean aggressiveLazyLoading;
+protected boolean multipleResultSetsEnabled = true;
+protected boolean useGeneratedKeys;
+protected boolean useColumnLabel = true;
+protected boolean cacheEnabled = true;
+protected boolean callSettersOnNulls;
+protected boolean useActualParamName = true;
+protected boolean returnInstanceForEmptyRow;
 
-  protected String logPrefix;
-  protected Class<? extends Log> logImpl;
-  protected Class<? extends VFS> vfsImpl;
-  protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
-  protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
-  protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
-  protected Integer defaultStatementTimeout;
-  protected Integer defaultFetchSize;
-  protected ResultSetType defaultResultSetType;
-  protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
-  protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
-  protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
+protected String logPrefix;
+protected Class<? extends Log> logImpl;
+protected Class<? extends VFS> vfsImpl;
+protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+protected Integer defaultStatementTimeout;
+protected Integer defaultFetchSize;
+protected ResultSetType defaultResultSetType;
+protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
-  protected Properties variables = new Properties();
-  protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
-  protected ObjectFactory objectFactory = new DefaultObjectFactory();
-  protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+protected Properties variables = new Properties();
+protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+protected ObjectFactory objectFactory = new DefaultObjectFactory();
+protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
-  protected boolean lazyLoadingEnabled = false;
-  protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
+protected boolean lazyLoadingEnabled = false;
+protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
-  protected String databaseId;
-  /**
-   * Configuration factory class.
-   * Used to create Configuration for loading deserialized unread properties.
-   *
-   * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300 (google code)</a>
-   */
-  protected Class<?> configurationFactory;
+protected String databaseId;
+/**
+ * Configuration factory class.
+ * Used to create Configuration for loading deserialized unread properties.
+ *
+ * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300 (google code)</a>
+ */
+protected Class<?> configurationFactory;
 
-  protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
-  protected final InterceptorChain interceptorChain = new InterceptorChain();
-  protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
-  protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
-  protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+protected final InterceptorChain interceptorChain = new InterceptorChain();
+protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 ```
 
 #### 从 Mapper 配置文件中读取的属性
@@ -166,11 +166,121 @@ protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key G
 
 ## Configuration 对象创建过程
 
+下面来看下由 XML 构建 Configuration 的过程：
+```Java
+String resource = "org/mybatis/example/mybatis-config.xml";
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+```
 
+SqlSessionFactoryBuilder#build() 有一系列的重载方法，主要是提供不同参数创建 SqlSessionFactory，以最基本的 InputStream 的方式来看下源码：
+```Java
+public SqlSessionFactory build(InputStream inputStream) {
+  return build(inputStream, null, null);
+}
+public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
+  try {
+    // 通过配置文件创建 XMLConfigBuilder 对象
+    XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
+    // 将 XML 信息解析成 Configuration 对象，传入 build 方法构建 SqlSessionFactory
+    return build(parser.parse());
+  } catch (Exception e) {
+    throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+  } finally {
+    ErrorContext.instance().reset();
+    try {
+      inputStream.close();
+    } catch (IOException e) {
+      // Intentionally ignore. Prefer previous error.
+    }
+  }
+}
+// 最终都是构建出 Configuration，然后通过此方法创建 SqlSessionFactory
+public SqlSessionFactory build(Configuration config) {
+  return new DefaultSqlSessionFactory(config);
+}
+```
+
+#### XMLConfigBuilder
+
+XMLConfigBuilder#parse() 方法是如何构建 Configuration 呢？
+XMLConfigBuilder 会将 XML 配置文件的信息转换为 Document 对象，而 XML 配置定义文件 DTD 转换成 XMLMapperEntityResolver 对象，然后将二者封装到 XpathParser 对象中，XpathParser 的作用是提供根据 Xpath 表达式获取基本的 DOM 节点 Node 信息的操作。源码如下：
+
+```Java
+public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
+  // 构建 XPathParser，封装 Document、XMLMapperEntityResolver 对象
+  this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
+}
+
+private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+  super(new Configuration());
+  ErrorContext.instance().resource("SQL Mapper Configuration");
+  this.configuration.setVariables(props);
+  this.parsed = false;
+  this.environment = environment;
+  this.parser = parser;
+}
+```
+
+XpathParser 构造方法：
+```Java
+public XPathParser(InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver) {
+  // 创建 XMLMapperEntityResolver 对象
+  commonConstructor(validation, variables, entityResolver);
+  // 创建 Document 对象
+  this.document = createDocument(new InputSource(inputStream));
+}
+```
+
+#### XMLConfigBuilder#parse()
+
+构建完 XMLConfigBuilder 对象后，调用其 parse() 方法，得到 Configuration 对象。
+会从 XPathParser 中取出 <configuration> 节点对应的Node对象，然后解析此 Node 节点的子 Node：properties, settings, typeAliases, typeHandlers, objectFactory, objectWrapperFactory, plugins, environments, databaseIdProvider, mappers
+
+```Java
+public Configuration parse() {
+  if (parsed) {
+    throw new BuilderException("Each XMLConfigBuilder can only be used once.");
+  }
+  parsed = true;
+  // 从 XPathParser 解析出 <configuration> 节点对应的 Node 对象
+  parseConfiguration(parser.evalNode("/configuration"));
+  return configuration;
+}
+
+// 解析 <configuration> 下子节点的信息，设置到 configuration 对象中
+private void parseConfiguration(XNode root) {
+  try {
+    //issue #117 read properties first
+    propertiesElement(root.evalNode("properties"));
+    Properties settings = settingsAsProperties(root.evalNode("settings"));
+    loadCustomVfs(settings);
+    loadCustomLogImpl(settings);
+    typeAliasesElement(root.evalNode("typeAliases"));
+    pluginElement(root.evalNode("plugins"));
+    objectFactoryElement(root.evalNode("objectFactory"));
+    objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+    reflectorFactoryElement(root.evalNode("reflectorFactory"));
+    settingsElement(settings);
+    // read it after objectFactory and objectWrapperFactory issue #631
+    environmentsElement(root.evalNode("environments"));
+    databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+    typeHandlerElement(root.evalNode("typeHandlers"));
+    mapperElement(root.evalNode("mappers"));
+  } catch (Exception e) {
+    throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
+  }
+}
+```
+
+#### 整体过程
+
+最后通过一张序列图展示下完整的过程:
+![img](https://gitee.com/chenssy/blog-home/raw/master/image/series-images/database/mybatis//201908092001_5.png)
 
 ---
 
 ## 引用链接
 
-[IP地址，子网掩码、默认网关，DNS服务器是什么意思?](http://www.cnblogs.com/songQQ/archive/2009/05/27/1490612.html) <br>
-[网关 - 百度百科](http://baike.baidu.com/view/807.htm) <br>
+[《深入理解mybatis原理》 Mybatis初始化机制详解](http://cmsblogs.com/?p=5648) <br>
+[Mybatis 配置](https://mybatis.org/mybatis-3/zh/configuration.html) <br>
