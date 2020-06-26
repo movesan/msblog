@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      "Mybatis3源码分析（01） --- 初始化机制"
+title:      "Mybatis3源码分析 --- 初始化机制"
 subtitle:   "  "
 date:       2019-06-25 6:25:00
 author:     "Movesan"
-header-img: "img/post-bg/post-bg-network.jpg"
+header-img: ""
 catalog: true
 tags:
     - Mybatis
@@ -74,7 +74,6 @@ Mybatis 的初始化过程主要是通过 SqlSessionFactoryBuilder 创建 SqlSes
 ## Configuration 对象
 
 MyBatis 的配置文件包含了会深深影响 MyBatis 行为的设置和属性信息。 配置文档的顶层结构如下：
-
 * configuration（配置）
 * properties（属性）
 * settings（设置）
@@ -90,8 +89,8 @@ MyBatis 的配置文件包含了会深深影响 MyBatis 行为的设置和属性
 * mappers（映射器）
 
 Configuration 的属性主要分为两大部分：
-  * 从 mybatis-config.xml 中读取的配置
-  * 从 Mapper 配置文件或 Mapper 注解读取的配置
+  * 从 mybatis-config.xml 中读取的配置，通过 XMLConfigBuilder 解析
+  * 从 Mapper 配置文件或 Mapper 注解读取的配置，通过 XMLMapperBuilder 解析
 
 #### 从 mybatis-config.xml 文件中对应的属性
 
@@ -205,7 +204,6 @@ public SqlSessionFactory build(Configuration config) {
 
 XMLConfigBuilder#parse() 方法是如何构建 Configuration 呢？
 XMLConfigBuilder 会将 XML 配置文件的信息转换为 Document 对象，而 XML 配置定义文件 DTD 转换成 XMLMapperEntityResolver 对象，然后将二者封装到 XpathParser 对象中，XpathParser 的作用是提供根据 Xpath 表达式获取基本的 DOM 节点 Node 信息的操作。源码如下：
-
 ```Java
 public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
   // 构建 XPathParser，封装 Document、XMLMapperEntityResolver 对象
@@ -236,7 +234,6 @@ public XPathParser(InputStream inputStream, boolean validation, Properties varia
 
 构建完 XMLConfigBuilder 对象后，调用其 parse() 方法，得到 Configuration 对象。
 会从 XPathParser 中取出 <configuration> 节点对应的Node对象，然后解析此 Node 节点的子 Node：properties, settings, typeAliases, typeHandlers, objectFactory, objectWrapperFactory, plugins, environments, databaseIdProvider, mappers
-
 ```Java
 public Configuration parse() {
   if (parsed) {

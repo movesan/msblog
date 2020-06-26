@@ -1,0 +1,203 @@
+---
+layout:     post
+title:      "Mybatis3源码分析 --- 加载 Configuration - XMLConfigBuilder"
+subtitle:   "  "
+date:       2019-07-01 6:25:00
+author:     "Movesan"
+header-img: ""
+catalog: true
+tags:
+    - Mybatis
+
+---
+
+
+## 概述
+
+XMLConfigBuilder 负责加载 mybatis-config.xml 中的配置信息到 Configuration，主要通过 XMLConfigBuilder#parse() 方法：
+```Java
+  public Configuration parse() {
+    if (parsed) {
+      throw new BuilderException("Each XMLConfigBuilder can only be used once.");
+    }
+    parsed = true;
+    parseConfiguration(parser.evalNode("/configuration"));
+    return configuration;
+  }
+```
+
+其中详细的加载步骤在 parseConfiguration 方法中：
+```Java
+  private void parseConfiguration(XNode root) {
+    try {
+      //issue #117 read properties first
+      // 加载properties节点,一般是定义一些变量
+      propertiesElement(root.evalNode("properties"));
+      // 加载一些设置
+      Properties settings = settingsAsProperties(root.evalNode("settings"));
+      loadCustomVfs(settings);
+      loadCustomLogImpl(settings);
+      // 加载别名
+      typeAliasesElement(root.evalNode("typeAliases"));
+      // 加载插件
+      pluginElement(root.evalNode("plugins"));
+      objectFactoryElement(root.evalNode("objectFactory"));
+      objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      settingsElement(settings);
+      // read it after objectFactory and objectWrapperFactory issue #631
+      environmentsElement(root.evalNode("environments"));
+      databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      typeHandlerElement(root.evalNode("typeHandlers"));
+      
+      // 加载Mapper的配置文件，底层通过 XMLMapperBuilder 加载，最主要的有两个：一个是sql的定义，一个是resultMap
+      mapperElement(root.evalNode("mappers"));
+    } catch (Exception e) {
+      throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
+    }
+  }
+```
+
+## 加载 Properties 节点
+
+```Java
+  private void propertiesElement(XNode context) throws Exception {
+    if (context != null) {
+      // 先加载property子节点下的属性
+      Properties defaults = context.getChildrenAsProperties();
+      String resource = context.getStringAttribute("resource");
+      String url = context.getStringAttribute("url");
+      // 不能同时设置resource属性和url属性
+      if (resource != null && url != null) {
+        throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
+      }
+      if (resource != null) {
+        // 会覆盖子节点的配置
+        defaults.putAll(Resources.getResourceAsProperties(resource));
+      } else if (url != null) {
+        // 会覆盖子节点的配置
+        defaults.putAll(Resources.getUrlAsProperties(url));
+      }
+      Properties vars = configuration.getVariables();
+      if (vars != null) {
+        // 编程的方式优先级最高
+        defaults.putAll(vars);
+      }
+      parser.setVariables(defaults);
+      // 设置了变量列表中去
+      configuration.setVariables(defaults);
+    }
+  }
+```
+
+从这个方法中可以看出配置规则：
+1.可以设置url或resource属性从外部文件中加载一个properties文件
+2.可以通过property子节点进行配置，如果子节点属性的key与外部文件的key重复的话，子节点的将被覆
+3.通过编程方式定义的属性最后加载，优先级最高：
+    public SqlSessionFactory build(InputStream inputStream, Properties properties)
+    
+properties 配置示例，这里加载的主要是给后面的配置作为变量使用：
+    <properties resource="org/mybatis/example/config.properties">
+      <property name="username" value="dev_user"/>
+      <property name="password" value="F2Fa3!33TYyg"/>
+    </properties>
+
+## 加载 typeAliases 节点
+
+```Java
+  private void typeAliasesElement(XNode parent) {
+    if (parent != null) {
+      for (XNode child : parent.getChildren()) {
+        if ("package".equals(child.getName())) {
+          String typeAliasPackage = child.getStringAttribute("name");
+          configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
+        } else {
+          String alias = child.getStringAttribute("alias");
+          String type = child.getStringAttribute("type");
+          try {
+            Class<?> clazz = Resources.classForName(type);
+            if (alias == null) {
+              typeAliasRegistry.registerAlias(clazz);
+            } else {
+              // 加载到别名注册表中
+              typeAliasRegistry.registerAlias(alias, clazz);
+            }
+          } catch (ClassNotFoundException e) {
+            throw new BuilderException("Error registering typeAlias for '" + alias + "'. Cause: " + e, e);
+          }
+        }
+      }
+    }
+  }
+```
+
+再看 TypeAliasRegistry 源码，发现mybatis已经为定义了很多别名，方便以后的配置：
+```Java
+  public TypeAliasRegistry() {
+      registerAlias("string", String.class);
+  
+      registerAlias("byte", Byte.class);
+      registerAlias("long", Long.class);
+      registerAlias("short", Short.class);
+      registerAlias("int", Integer.class);
+      registerAlias("integer", Integer.class);
+      registerAlias("double", Double.class);
+      registerAlias("float", Float.class);
+      registerAlias("boolean", Boolean.class);
+  
+      registerAlias("byte[]", Byte[].class);
+      registerAlias("long[]", Long[].class);
+      registerAlias("short[]", Short[].class);
+      registerAlias("int[]", Integer[].class);
+      registerAlias("integer[]", Integer[].class);
+      registerAlias("double[]", Double[].class);
+      registerAlias("float[]", Float[].class);
+      registerAlias("boolean[]", Boolean[].class);
+  
+      registerAlias("_byte", byte.class);
+      registerAlias("_long", long.class);
+      registerAlias("_short", short.class);
+      registerAlias("_int", int.class);
+      registerAlias("_integer", int.class);
+      registerAlias("_double", double.class);
+      registerAlias("_float", float.class);
+      registerAlias("_boolean", boolean.class);
+  
+      registerAlias("_byte[]", byte[].class);
+      registerAlias("_long[]", long[].class);
+      registerAlias("_short[]", short[].class);
+      registerAlias("_int[]", int[].class);
+      registerAlias("_integer[]", int[].class);
+      registerAlias("_double[]", double[].class);
+      registerAlias("_float[]", float[].class);
+      registerAlias("_boolean[]", boolean[].class);
+  
+      registerAlias("date", Date.class);
+      registerAlias("decimal", BigDecimal.class);
+      registerAlias("bigdecimal", BigDecimal.class);
+      registerAlias("biginteger", BigInteger.class);
+      registerAlias("object", Object.class);
+  
+      registerAlias("date[]", Date[].class);
+      registerAlias("decimal[]", BigDecimal[].class);
+      registerAlias("bigdecimal[]", BigDecimal[].class);
+      registerAlias("biginteger[]", BigInteger[].class);
+      registerAlias("object[]", Object[].class);
+  
+      registerAlias("map", Map.class);
+      registerAlias("hashmap", HashMap.class);
+      registerAlias("list", List.class);
+      registerAlias("arraylist", ArrayList.class);
+      registerAlias("collection", Collection.class);
+      registerAlias("iterator", Iterator.class);
+  
+      registerAlias("ResultSet", ResultSet.class);
+  }
+```
+
+---
+
+## 引用链接
+
+[《深入理解mybatis原理》 Mybatis初始化机制详解](http://cmsblogs.com/?p=5648) <br>
+[Mybatis 源码分析](https://blog.csdn.net/ashan_li/article/category/6047775/1?) <br>
